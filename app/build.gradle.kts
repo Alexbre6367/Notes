@@ -17,7 +17,6 @@ if (localPropertiesFile.exists()) {
     localProperties.load(FileInputStream(localPropertiesFile))
 }
 val geminiApiKey = localProperties.getProperty("GEMINI_API_KEY") ?: ""
-val googleClientKey = localProperties.getProperty("GOOGLE_CLIENT_KEY") ?: ""
 
 
 
@@ -40,8 +39,6 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("String", "GEMINI_API_KEY", "\"$geminiApiKey\"")
-
-        buildConfigField("String", "GOOGLE_CLIENT_KEY", "\"$googleClientKey\"")
     }
 
 

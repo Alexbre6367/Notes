@@ -90,7 +90,7 @@ fun LoginScreen(
         animationSpec = tween(durationMillis = 500)
     )
 
-    val openDialog = remember { mutableStateOf(false) }
+    var openDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     if(isErrorEmail) {
@@ -138,7 +138,7 @@ fun LoginScreen(
                 ) {
                     Icon(
                         Icons.AutoMirrored.Default.ArrowBack,
-                        contentDescription = "back"
+                        contentDescription = "Back"
                     )
                 }
             }
@@ -308,7 +308,7 @@ fun LoginScreen(
                 
                 Button(
                     onClick = {
-                        openDialog.value = true
+                        openDialog = !openDialog
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -357,13 +357,13 @@ fun LoginScreen(
                         color = backgroundColorBlack
                     )
                 }
-                if (openDialog.value) {
+                if (openDialog) {
                     AlertDialog(
-                        onDismissRequest = { openDialog.value = false },
+                        onDismissRequest = { openDialog = false },
                         title = { Text(text = "В разработке") },
                         confirmButton = {
                             Button(
-                                { openDialog.value = false },
+                                { openDialog = false },
                                 colors = ButtonDefaults.buttonColors(backgroundColorWhite)
                             ) {
                                 Text("OK")

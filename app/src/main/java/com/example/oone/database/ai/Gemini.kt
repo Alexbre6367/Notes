@@ -10,7 +10,7 @@ import com.google.ai.client.generativeai.type.content
 object Gemini {
     private val model = GenerativeModel(
         modelName = "gemini-1.5-flash",
-        apiKey = BuildConfig.GOOGLE_CLIENT_KEY
+        apiKey = BuildConfig.GEMINI_API_KEY
     )
 
     suspend fun analyze(descriptor: String): String? {

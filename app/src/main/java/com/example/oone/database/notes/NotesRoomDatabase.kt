@@ -54,9 +54,30 @@ abstract class NotesRoomDatabase : RoomDatabase() {
                 db.execSQL("ALTER TABLE note ADD COLUMN nameNote  TEXT NOT NULL DEFAULT ''")
             }
         }
-        private val MIGRATION_9_10= object : Migration(9, 10) {
+        val MIGRATION_9_10 = object : Migration(9, 10) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                db.execSQL("ALTER TABLE note RENAME COLUMN ownerId_temp TO ownerId")
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS note_new (
+                    noteId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    noteBody TEXT NOT NULL,
+                    noteStatus INTEGER NOT NULL,
+                    notePassword INTEGER NOT NULL,
+                    lastEdited TEXT NOT NULL,
+                    ownerId TEXT NOT NULL,
+                    aiStatus INTEGER NOT NULL,
+                    nameNote TEXT NOT NULL
+                    )
+                    """.trimIndent())
+
+                db.execSQL(
+                    """
+                    INSERT INTO note_new (noteId, noteBody, noteStatus, notePassword, lastEdited, ownerId, aiStatus, nameNote)
+                    SELECT noteId, noteBody, noteStatus, notePassword, lastEdited, ownerId, aiStatus, nameNote FROM note 
+                    """.trimIndent())
+
+                db.execSQL("DROP TABLE note")
+                db.execSQL("ALTER TABLE note_new RENAME TO note")
             }
         }
     }

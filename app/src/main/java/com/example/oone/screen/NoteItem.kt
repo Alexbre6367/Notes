@@ -46,7 +46,8 @@ fun NoteItem(
     onEdit: () -> Unit,
     isDarkTheme: Boolean,
     viewModel: NotesViewModel,
-    activity: FragmentActivity
+    activity: FragmentActivity,
+    isSelected: Boolean
 ){
     val borderColor = Color(52, 52, 52)
 
@@ -69,12 +70,16 @@ fun NoteItem(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
                 onClick = {
-                    if (note.state) {
-                        authenticate(activity) {
+                    if(isSelected) {
+                        viewModel.toggleNoteSelection(note.id)
+                    } else {
+                        if (note.state) {
+                            authenticate(activity) {
+                                onEdit()
+                            }
+                        } else {
                             onEdit()
                         }
-                    } else {
-                        onEdit()
                     }
                 },
                 onLongClick = {

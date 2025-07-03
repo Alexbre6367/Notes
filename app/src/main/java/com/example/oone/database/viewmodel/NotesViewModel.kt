@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.util.stream.Collectors.toSet
 
 class NotesViewModel(application: Application) : AndroidViewModel(application) {
     val notesList: LiveData<List<Notes>>
@@ -66,6 +67,10 @@ class NotesViewModel(application: Application) : AndroidViewModel(application) {
         } else {
             _selectedNoteId.value + noteId
         }
+    }
+
+    fun toggleNoteAll() {
+        _selectedNoteId.value = notesList.value?.map { notes -> notes.id }?.toSet()?: emptySet()
     }
 
     fun deleteSelectedNotes() {

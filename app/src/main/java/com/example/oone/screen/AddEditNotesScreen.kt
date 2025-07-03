@@ -2,6 +2,7 @@ package com.example.oone.screen
 
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -23,6 +24,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AutoFixHigh
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
@@ -30,6 +32,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.outlined.AutoFixHigh
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -54,6 +57,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
@@ -126,7 +130,6 @@ fun AddEditNoteScreen(
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
-    val isKeyboardOpen = WindowInsets.ime.getBottom(LocalDensity.current) > 0
 
     LaunchedEffect(noteToEdit) {
         if(noteToEdit != null){
@@ -222,6 +225,7 @@ fun AddEditNoteScreen(
                 errorMassage,
                 Toast.LENGTH_LONG
             ).show()
+            tempAiStatus = false
         }
     }
 
@@ -233,6 +237,7 @@ fun AddEditNoteScreen(
     }
 
     Scaffold(
+        modifier = Modifier.imePadding(),
         topBar = {
             TopAppBar(
                 modifier = Modifier.height(90.dp),
@@ -254,22 +259,22 @@ fun AddEditNoteScreen(
                 },
 
                 actions = {
-                        IconButton(onClick = {
-                            coroutineScore.launch {
-                                if(tempBody.text.isNotBlank()) {
-                                    tempAiStatus = true
-                                    viewModel?.analyze(tempBody.text)
-                                }
+                    IconButton(onClick = {
+                        coroutineScore.launch {
+                            if(tempBody.text.isNotBlank()) {
+                                tempAiStatus = true
+                                viewModel?.analyze(tempBody.text)
                             }
-                        }) {
-                            Icon(
-                                imageVector =
-                                    if (tempAiStatus && tempBody.text.isNotBlank()) Icons.Default.AutoFixHigh
-                                    else Icons.Outlined.AutoFixHigh,
-                                contentDescription = "AI",
-                                tint = if (tempAiStatus && tempBody.text.isNotBlank()) colorRed else backgroundColorWhite
-                            )
                         }
+                    }) {
+                        Icon(
+                            imageVector =
+                                if (tempAiStatus && tempBody.text.isNotBlank()) Icons.Default.AutoFixHigh
+                                else Icons.Outlined.AutoFixHigh,
+                            contentDescription = "AI",
+                            tint = if (tempAiStatus && tempBody.text.isNotBlank()) colorRed else backgroundColorWhite
+                        )
+                    }
 
                     IconButton(onClick = {
                         tempStatus = !tempStatus
@@ -317,25 +322,31 @@ fun AddEditNoteScreen(
         bottomBar = {
             val navBarHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() // чтобы не залазило на панель навигации
             BottomAppBar(
-                modifier = Modifier.fillMaxWidth().height(40.dp + navBarHeight),
+                modifier = Modifier.fillMaxWidth().height(30.dp + navBarHeight),
                 containerColor = backgroundColorBlack,
                 contentColor = backgroundColorWhite,
                 tonalElevation = 0.dp,
             ) {
-                Row(
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
+                        .padding(horizontal = 8.dp)
                 ) {
+                    IconButton(
+                        onClick = {
+                            navController?.navigate("share_user")
+                        },
+                        modifier = Modifier.align(alignment = Alignment.CenterStart)
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = "Добавить")
+                    }
 
-                        Text(
-                            text = "Изменено ${lastEditTime.formatBasedOnDate()}",
-                            color = backgroundColorWhite,
-                            style = MaterialTheme.typography.bodyMedium,
-                            )
-
+                    Text(
+                        modifier = Modifier.align(alignment = Alignment.Center),
+                        text = "Изменено ${lastEditTime.formatBasedOnDate()}",
+                        color = backgroundColorWhite,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
                 }
             }
         },
@@ -361,10 +372,8 @@ fun AddEditNoteScreen(
                         .fillMaxSize()
                         .background(backgroundColorBlack)
                         .padding(horizontal = 8.dp)
-                        .padding(top = padding.calculateTopPadding())
+                        .padding(top = padding.calculateTopPadding(), bottom = 44.dp)
                         .navigationBarsPadding()
-                        .padding(bottom = if (!isKeyboardOpen) 44.dp else 0.dp)
-                        .imePadding()
                         .verticalScroll(rememberScrollState()),
                 ) {
                     OutlinedTextField(
@@ -374,8 +383,7 @@ fun AddEditNoteScreen(
                         },
                         placeholder = { Text("Название", fontSize = 24.sp) }, //label text уходит на рамку, placeholder text пропадает при взаимодействии
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .focusRequester(focusRequester),
+                            .fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
                             cursorColor = backgroundColorWhite,
                             focusedBorderColor = Color.Transparent,

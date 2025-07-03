@@ -30,13 +30,6 @@ class NotesRepository(private val notesDao: NoteDao?, private val secureStorage:
 
     suspend fun addNote(note: Notes) {
         withContext(Dispatchers.IO) {
-            val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return@withContext
-
-            val updateOwnerId = note.ownerId.toMutableList().apply {
-                if(!contains(userId)) add(userId)
-            }
-            val updateNote = note.copy(ownerId = updateOwnerId)
-
             val newId = notesDao?.addNoteAndReturnId(note) ?: return@withContext
             note.id = newId.toInt()
             uploadNoteToFirestore(note)

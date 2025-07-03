@@ -28,11 +28,15 @@ package com.example.oone.screen
  import androidx.compose.material.icons.automirrored.filled.Send
  import androidx.compose.material.icons.filled.AccountCircle
  import androidx.compose.material.icons.filled.Add
+ import androidx.compose.material.icons.filled.AutoAwesomeMotion
  import androidx.compose.material.icons.filled.Check
  import androidx.compose.material.icons.filled.Delete
  import androidx.compose.material.icons.filled.Edit
  import androidx.compose.material.icons.filled.Menu
  import androidx.compose.material.icons.filled.Settings
+ import androidx.compose.material3.Button
+ import androidx.compose.material3.ButtonColors
+ import androidx.compose.material3.ButtonDefaults
  import androidx.compose.material3.DrawerValue
  import androidx.compose.material3.ExperimentalMaterial3Api
  import androidx.compose.material3.FloatingActionButton
@@ -92,6 +96,8 @@ fun NotesScreen(
                 .thenByDescending { it.id }
         )
     }
+
+    val selectedId by viewModel.selectedNoteId.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.loadNotesFromFirestore()//из Firestore
@@ -185,24 +191,41 @@ fun NotesScreen(
                         navigationIconContentColor = backgroundColorWhite
                     ),
                     navigationIcon = {
-                        IconButton(
-                            onClick = {
-                                score.launch {
-                                    drawerState.open()
-                                }
-                                if (viewModel.selectedNoteId.value.isNotEmpty()) {
-                                    viewModel.clearSelection()
-                                }
-                            },
-                            modifier = Modifier
-                                .padding(horizontal = 5.dp)
-                                .fillMaxHeight()
-                        ) {
-                            Icon(
-                                Icons.Default.Menu,
-                                contentDescription = "Menu",
-                                modifier = Modifier.size(24.dp)
-                            )
+                        if(selectedId.isNotEmpty()) {
+                            IconButton(
+                                onClick = {
+                                    viewModel.toggleNoteAll()
+                                },
+                                modifier = Modifier
+                                    .padding(horizontal = 5.dp)
+                                    .fillMaxHeight()
+                            ) {
+                                Icon(
+                                    Icons.Default.AutoAwesomeMotion,
+                                    contentDescription = "All",
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                        } else {
+                            IconButton(
+                                onClick = {
+                                    score.launch {
+                                        drawerState.open()
+                                    }
+                                    if (viewModel.selectedNoteId.value.isNotEmpty()) {
+                                        viewModel.clearSelection()
+                                    }
+                                },
+                                modifier = Modifier
+                                    .padding(horizontal = 5.dp)
+                                    .fillMaxHeight()
+                            ) {
+                                Icon(
+                                    Icons.Default.Menu,
+                                    contentDescription = "Menu",
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
                         }
                     },
                     title = {
@@ -221,13 +244,19 @@ fun NotesScreen(
                         IconButton(
                             onClick = {
                                 val user = FirebaseAuth.getInstance().currentUser
-                                if (user != null) {
-                                    navController.navigate("account_screen")
+                                if (selectedNoteId.isNotEmpty()) {
+                                    if (deleteActivated) {
+                                        viewModel.deleteSelectedNotes()
+                                        deleteActivated = false
+                                    } else {
+                                        deleteActivated = true
+                                    }
                                 } else {
-                                    navController.navigate("login_screen")
-                                }
-                                if (viewModel.selectedNoteId.value.isNotEmpty()) {
-                                    viewModel.clearSelection()
+                                    if (user != null) {
+                                        navController.navigate("account_screen")
+                                    } else {
+                                        navController.navigate("login_screen")
+                                    }
                                 }
                             },
                             modifier = Modifier
@@ -235,9 +264,13 @@ fun NotesScreen(
                                 .fillMaxHeight()
                         ) {
                             Icon(
-                                Icons.Default.AccountCircle,
-                                contentDescription = "Account",
-                                tint = backgroundColorWhite,
+                                imageVector = when {
+                                    selectedNoteId.isNotEmpty() && deleteActivated -> Icons.Default.Check
+                                    selectedNoteId.isNotEmpty() -> Icons.Default.Delete
+                                    else -> Icons.Default.AccountCircle
+                                },
+                                contentDescription = "Account or Delete",
+                                tint = if(deleteActivated) Color.Red else backgroundColorWhite,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
@@ -278,7 +311,7 @@ fun NotesScreen(
 
                                 val pinnedNotesSorted = pinnedNotes.sortedByDescending { it.id }
                                 val aiNotesSorted = aiNotes.sortedByDescending { it.id }
-                                val otherNotesSorted = otherNotes.sortedByDescending { it.id } //оптимизировать
+                                val otherNotesSorted = otherNotes.sortedByDescending { it.id }
 
                                 if (pinnedNotesSorted.isNotEmpty() || aiNotesSorted.isNotEmpty()) {
                                     if (pinnedNotesSorted.isNotEmpty()) {
@@ -300,7 +333,8 @@ fun NotesScreen(
                                                 onEdit = { navController.navigate("edit_note/${note.id}") },
                                                 isDarkTheme = isDarkTheme,
                                                 viewModel = viewModel,
-                                                activity = activity
+                                                activity = activity,
+                                                isSelected = selectedId.isNotEmpty()
                                             )
                                         }
                                     }
@@ -324,7 +358,8 @@ fun NotesScreen(
                                                 onEdit = { navController.navigate("edit_note/${note.id}") },
                                                 isDarkTheme = isDarkTheme,
                                                 viewModel = viewModel,
-                                                activity = activity
+                                                activity = activity,
+                                                isSelected = selectedId.isNotEmpty()
                                             )
                                         }
                                     }
@@ -348,7 +383,8 @@ fun NotesScreen(
                                                 onEdit = { navController.navigate("edit_note/${note.id}") },
                                                 isDarkTheme = isDarkTheme,
                                                 viewModel = viewModel,
-                                                activity = activity
+                                                activity = activity,
+                                                isSelected = selectedId.isNotEmpty()
                                             )
                                         }
                                     }
@@ -359,7 +395,8 @@ fun NotesScreen(
                                             onEdit = { navController.navigate("edit_note/${note.id}") },
                                             isDarkTheme = isDarkTheme,
                                             viewModel = viewModel,
-                                            activity = activity
+                                            activity = activity,
+                                            isSelected = selectedId.isNotEmpty()
                                         )
                                     }
                                 }
@@ -388,12 +425,8 @@ fun NotesScreen(
                         elevation = FloatingActionButtonDefaults.elevation(0.dp),
                     ) {
                         Icon(
-                            imageVector = when {
-                                selectedNoteId.isNotEmpty() && deleteActivated -> Icons.Default.Check
-                                selectedNoteId.isNotEmpty() -> Icons.Default.Delete
-                                else -> Icons.Default.Add
-                            },
-                            contentDescription = if (selectedNoteId.isNotEmpty()) "Delete Note" else "Open",
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add",
                             tint = Color.White
                         )
                     }
@@ -429,7 +462,6 @@ private fun EmptyState(isDarkTheme: Boolean) {
         )
     }
 }
-
 
 
 

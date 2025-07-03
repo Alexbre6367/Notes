@@ -22,6 +22,7 @@ import com.example.oone.screen.NotesScreen
 import com.example.oone.screen.SettingScreen
 import com.example.oone.screen.login.AccountScreen
 import com.example.oone.screen.login.LoginScreen
+import com.example.oone.screen.ShareUser
 
 
 @Composable
@@ -199,6 +200,15 @@ fun AppNavGraph(
                     themeViewModel = themeViewModel,
                     navController = navController,
                     placeViewModel = placeViewModel
+                )
+            }
+            composable(
+                route = "share_user"
+            ) {
+                ShareUser(
+                    themeViewModel = themeViewModel,
+                    viewModel = viewModel,
+                    navController = navController
                 )
             }
         }
