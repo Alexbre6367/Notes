@@ -34,9 +34,6 @@ package com.example.oone.screen
  import androidx.compose.material.icons.filled.Edit
  import androidx.compose.material.icons.filled.Menu
  import androidx.compose.material.icons.filled.Settings
- import androidx.compose.material3.Button
- import androidx.compose.material3.ButtonColors
- import androidx.compose.material3.ButtonDefaults
  import androidx.compose.material3.DrawerValue
  import androidx.compose.material3.ExperimentalMaterial3Api
  import androidx.compose.material3.FloatingActionButton
@@ -300,10 +297,7 @@ fun NotesScreen(
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(horizontal = 8.dp)
-                                    .padding(
-                                        top = WindowInsets.statusBars.asPaddingValues()
-                                            .calculateTopPadding()
-                                    )
+                                    .padding(top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding())
                             ) {
                                 val pinnedNotes = sortedNotes.filter { it.status }
                                 val aiNotes = sortedNotes.filter { it.aiStatus && !it.status}
@@ -406,16 +400,8 @@ fun NotesScreen(
 
                     FloatingActionButton(
                         onClick = {
-                            if (selectedNoteId.isNotEmpty()) {
-                                if (deleteActivated) {
-                                    viewModel.deleteSelectedNotes()
-                                    deleteActivated = false
-                                } else {
-                                    deleteActivated = true
-                                }
-                            } else {
-                                navController.navigate("add_note")
-                            }
+                            navController.navigate("add_note")
+                            viewModel.clearSelection()
                         },
                         modifier = Modifier
                             .align(alignmentEnd)

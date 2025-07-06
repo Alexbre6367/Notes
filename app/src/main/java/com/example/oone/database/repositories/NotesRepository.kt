@@ -9,10 +9,12 @@ import com.example.oone.database.notes.Notes
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
+import kotlin.collections.emptyList
 
 
 class NotesRepository(private val notesDao: NoteDao?, private val secureStorage: SecureStorage) {
@@ -76,10 +78,10 @@ class NotesRepository(private val notesDao: NoteDao?, private val secureStorage:
         notesCollection.document(note.id.toString())
             .set(note.toMap(userId))
             .addOnSuccessListener {
-                Log.d("Firestore", "Note uploaded: ${note.id}")
+                Log.d("MyLog", "Заметка загруженна: ${note.id}")
             }
             .addOnFailureListener { e ->
-                Log.e("Firestore", "Upload failed", e)
+                Log.e("MyLog", "Ошибка загрузки на Firebase", e)
             }
     }
 

@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import java.util.stream.Collectors.toSet
 
 class NotesViewModel(application: Application) : AndroidViewModel(application) {
     val notesList: LiveData<List<Notes>>
