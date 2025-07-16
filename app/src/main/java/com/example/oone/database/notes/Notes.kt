@@ -26,7 +26,7 @@ data class Notes(
     var lastEdited: LocalDateTime = LocalDateTime.now(),
 
     @ColumnInfo("ownerId")
-    var ownerId: List<String> = listOf(),
+    var ownerId: String = "",
 
     var aiStatus: Boolean = false,
 

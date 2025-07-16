@@ -104,7 +104,7 @@ class NotesRepository(private val notesDao: NoteDao?, private val secureStorage:
                             status = data["status"] as Boolean,
                             state = data["state"] as Boolean,
                             lastEdited = LocalDateTime.parse(data["lastEdited"] as String),
-                            ownerId = (data["ownerId"] as? List<*>)?.filterIsInstance<String>() ?: listOf(),
+                            ownerId = data["ownerId"] as String,
                             aiStatus = data["aiStatus"] as Boolean,
                             nameNote = data["nameNote"] as String
                         )

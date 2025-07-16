@@ -9,10 +9,9 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.oone.database.converters.Converters
-import com.example.oone.database.converters.ConvertersRoom
 
 @Database(entities = [Notes::class], version = 10)
-@TypeConverters(Converters::class, ConvertersRoom::class)
+@TypeConverters(Converters::class)
 abstract class NotesRoomDatabase : RoomDatabase() {
     abstract fun noteDao(): NoteDao
 

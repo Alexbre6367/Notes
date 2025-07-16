@@ -22,7 +22,7 @@ val geminiApiKey = localProperties.getProperty("GEMINI_API_KEY") ?: ""
 
 android {
     namespace = "com.example.oone"
-    compileSdk = 36
+    compileSdk = 35
 
     buildFeatures {
         buildConfig = true

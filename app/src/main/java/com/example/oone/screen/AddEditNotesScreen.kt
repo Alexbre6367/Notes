@@ -322,15 +322,6 @@ fun AddEditNoteScreen(
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp)
                 ) {
-                    IconButton(
-                        onClick = {
-                            navController?.navigate("share_user")
-                        },
-                        modifier = Modifier.align(alignment = Alignment.CenterStart)
-                    ) {
-                        Icon(Icons.Default.Add, contentDescription = "Добавить")
-                    }
-
                     Text(
                         modifier = Modifier.align(alignment = Alignment.Center),
                         text = "Изменено ${lastEditTime.formatBasedOnDate()}",
