@@ -33,7 +33,7 @@ data class Notes(
     var nameNote: String = ""
 
 ) {
-    fun toMap(ownerId: String): Map<String, Any?> = mapOf(
+    fun toMap(ownerId: String?): Map<String, Any?> = mapOf(
         "id" to id,
         "body" to body,
         "status" to status,

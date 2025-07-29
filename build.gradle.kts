@@ -6,4 +6,5 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.gms)
+    id("com.google.firebase.crashlytics") version "3.0.5" apply false
 }

@@ -1,5 +1,6 @@
 package com.example.oone.screen
 
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -128,7 +129,12 @@ fun AddEditNoteScreen(
         if(noteToEdit != null){
             focusRequester.freeFocus()
         } else {
-            focusRequester.requestFocus()
+            delay(100)
+            try {
+                focusRequester.requestFocus()
+            } catch (e: Exception) {
+                Log.e("MyLog", "Не удалось запросить фокус", e)
+            }
         }
     }
 

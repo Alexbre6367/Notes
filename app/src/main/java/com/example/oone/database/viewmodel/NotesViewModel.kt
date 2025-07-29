@@ -1,6 +1,7 @@
 package com.example.oone.database.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
@@ -12,6 +13,7 @@ import com.example.oone.database.repositories.NotesRepository
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +21,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class NotesViewModel(application: Application) : AndroidViewModel(application) {
     val notesList: LiveData<List<Notes>>
@@ -119,7 +122,9 @@ class NotesViewModel(application: Application) : AndroidViewModel(application) {
                         repository.insertIfNotExists(notes)
                     }
                     DocumentChange.Type.REMOVED -> {
-                        repository.deleteNote(notes.id)
+                        withContext(Dispatchers.IO) {
+                            repository.notesDao?.deleteNote(notes.id)
+                        }
                     }
                 }
             }

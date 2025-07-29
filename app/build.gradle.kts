@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.gms)
     id("kotlin-kapt")
+    id("com.google.firebase.crashlytics")
 }
 
 
@@ -34,7 +35,7 @@ android {
         minSdk = 29
         targetSdk = 36
         versionCode = 1
-        versionName = "0.9.1"
+        versionName = "0.9.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -49,6 +50,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -67,6 +69,8 @@ kapt{
 }
 
 dependencies {
+    implementation("com.google.firebase:firebase-crashlytics-ndk:20.0.0")
+    implementation("com.google.firebase:firebase-analytics:23.0.0")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.2")
 

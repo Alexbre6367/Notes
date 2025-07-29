@@ -8,8 +8,9 @@ import com.example.oone.database.notes.NoteDao
 import com.example.oone.database.notes.Notes
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.DocumentChange
-import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -17,7 +18,7 @@ import java.time.LocalDateTime
 import kotlin.collections.emptyList
 
 
-class NotesRepository(private val notesDao: NoteDao?, private val secureStorage: SecureStorage) {
+class NotesRepository(val notesDao: NoteDao?, private val secureStorage: SecureStorage) {
 
     private val firestore = Firebase.firestore
     private val notesCollection = firestore.collection("notes")
@@ -73,12 +74,18 @@ class NotesRepository(private val notesDao: NoteDao?, private val secureStorage:
     }
 
     private fun uploadNoteToFirestore(note: Notes) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val userId = Firebase.auth.currentUser?.uid
+        if (userId != null) {
+            val noteMap = note.toMap(userId)
+            firestore.collection("notes").document(note.id.toString()).set(noteMap)
+        } else {
+            Log.e("MyLog", "Ошибка: пользователь не авторизован")
+        }
 
         notesCollection.document(note.id.toString())
-            .set(note.toMap(userId))
+            .set(note.toMap(userId), SetOptions.merge())
             .addOnSuccessListener {
-                Log.d("MyLog", "Заметка загруженна: ${note.id}")
+                Log.d("MyLog", "Заметка загруженна: ${note.id}" )
             }
             .addOnFailureListener { e ->
                 Log.e("MyLog", "Ошибка загрузки на Firebase", e)
