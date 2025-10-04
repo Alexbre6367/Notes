@@ -34,12 +34,6 @@ class NotesViewModel(application: Application) : AndroidViewModel(application) {
     private val _userPassword = MutableStateFlow(secureStorage.getPassword() ?: "")
     val userPassword = _userPassword.asStateFlow()
 
-    private val _analysisResult = MutableStateFlow<String?>(null)
-    val analysisResult: StateFlow<String?> = _analysisResult.asStateFlow()
-
-    private val _errorLog = Channel<String>(Channel.BUFFERED)
-    val errorLog: Flow<String> = _errorLog.receiveAsFlow()
-
     init {
         val noteDb = NotesRoomDatabase.getInstance(application)
         val noteDao = noteDb?.noteDao()
@@ -137,6 +131,11 @@ class NotesViewModel(application: Application) : AndroidViewModel(application) {
         secureStorage.saveCredentials(email, password)
     }
 
+    private val _analysisResult = MutableStateFlow<String?>(null)
+    val analysisResult: StateFlow<String?> = _analysisResult.asStateFlow()
+
+    private val _errorLog = Channel<String>(Channel.BUFFERED)
+    val errorLog: Flow<String> = _errorLog.receiveAsFlow()
     fun analyze(text: String) {
         viewModelScope.launch {
             val result = Gemini.analyze(text)

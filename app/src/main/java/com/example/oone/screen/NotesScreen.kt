@@ -298,7 +298,7 @@ fun NotesScreen(
                                     .fillMaxSize()
                                     .padding(horizontal = 8.dp)
                                     .padding(top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding())
-                            ) {
+                                ) {
                                 val pinnedNotes = sortedNotes.filter { it.status }
                                 val aiNotes = sortedNotes.filter { it.aiStatus && !it.status}
                                 val otherNotes = sortedNotes.filter { !it.status && !it.aiStatus}
