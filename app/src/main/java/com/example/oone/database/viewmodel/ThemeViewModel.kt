@@ -1,30 +1,24 @@
 package com.example.oone.database.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.oone.screen.theme.ThemePreference
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 
-class ThemeViewModel(application: Application) : AndroidViewModel(application) {
-    private val pref = ThemePreference(application)
-
-    private val _isDarkTheme = MutableStateFlow(true)
-    val isDarkTheme: StateFlow<Boolean> = _isDarkTheme
-
-    init {
-        pref.themeFlow.onEach {
-            _isDarkTheme.value = it
-        }.launchIn(viewModelScope)
-    }
-
+class ThemeViewModel(initialDarkTheme: Boolean) : ViewModel() {
+    private val _isDarkTheme = mutableStateOf(initialDarkTheme)
+    val isDarkTheme: State<Boolean> = _isDarkTheme
     fun toggleTheme() {
-        viewModelScope.launch {
-            pref.saveTheme(!_isDarkTheme.value)
+        _isDarkTheme.value = !_isDarkTheme.value
+    }
+}
+
+class ThemeViewModelFactory(private val initialDarkTheme: Boolean) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(ThemeViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return ThemeViewModel(initialDarkTheme) as T
         }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

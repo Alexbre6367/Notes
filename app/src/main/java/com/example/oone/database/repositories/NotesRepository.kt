@@ -15,7 +15,6 @@ import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
-import kotlin.collections.emptyList
 
 
 class NotesRepository(val notesDao: NoteDao?, private val secureStorage: SecureStorage) {

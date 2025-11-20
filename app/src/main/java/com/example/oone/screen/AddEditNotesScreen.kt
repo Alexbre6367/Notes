@@ -21,7 +21,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AutoFixHigh
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
@@ -41,6 +40,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -66,13 +66,15 @@ import androidx.navigation.NavHostController
 import com.example.oone.database.notes.Notes
 import com.example.oone.database.viewmodel.NotesViewModel
 import com.example.oone.database.viewmodel.ThemeViewModel
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-
+const val localUser = "local_user"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditNoteScreen(
@@ -117,7 +119,7 @@ fun AddEditNoteScreen(
     }
 
     val colorRed = Color(209, 46, 36)
-    val isDarkTheme by themeViewModel.isDarkTheme.collectAsState()
+    val isDarkTheme by themeViewModel.isDarkTheme
     val backgroundColorBlack = if (isDarkTheme) Color.Black else Color.White
     val backgroundColorWhite = if (isDarkTheme) Color.White else Color.Black
 
@@ -149,40 +151,66 @@ fun AddEditNoteScreen(
         val cleanBody = tempBody.text.trim()
         val cleanName = tempName.text.trim()
 
-        if(noteToEdit != null) {
-            val originalBody = noteToEdit.body.trim()
-            val originalName = noteToEdit.nameNote.trim()
-            val originalStatus = noteToEdit.status
-            val originalState = noteToEdit.state
+        if (cleanBody.isNotBlank() || cleanName.isNotBlank()) {
+            val currentUserId = Firebase.auth.currentUser?.uid ?: localUser
 
-            val hasChanged = cleanBody != originalBody || tempStatus != originalStatus || showPassword != originalState || cleanName != originalName
-
-            if (cleanBody.isBlank()) {
-                viewModel?.deleteNote(noteToEdit.id)
-            } else if (hasChanged) {
-                viewModel?.updateNote(noteToEdit.copy(
+            viewModel?.addNote(
+                Notes(
                     body = cleanBody,
                     status = tempStatus,
                     state = showPassword,
                     lastEdited = LocalDateTime.now(),
                     aiStatus = tempAiStatus,
-                    nameNote = cleanName
-                ))
-            }
-        } else {
-            if(cleanBody.isNotBlank()) {
-                viewModel?.addNote(Notes(
-                    body = cleanBody,
-                    status = tempStatus,
-                    state = showPassword,
-                    lastEdited = LocalDateTime.now(),
-                    aiStatus = tempAiStatus,
-                    nameNote = cleanName
-                ))
-            }
+                    nameNote = cleanName,
+                    ownerId = currentUserId
+                )
+            )
+
         }
         keyboardController?.hide()
-        focusManager.clearFocus()
+    }
+
+    if(noteToEdit != null) {
+        val isInitialComposition = remember { mutableStateOf(true) }
+        LaunchedEffect(tempBody.text, tempName.text, tempStatus, showPassword) {
+            if (isInitialComposition.value) {
+                isInitialComposition.value = false
+                return@LaunchedEffect
+            }
+
+            delay(500L)
+
+            val cleanBody = tempBody.text.trim()
+            val cleanName = tempName.text.trim()
+
+            val originalBody = noteToEdit.body.trim()
+            val originalName = noteToEdit.nameNote.trim()
+            val hasChanged = cleanBody != originalBody || cleanName != originalName ||
+                    tempStatus != noteToEdit.status || showPassword != noteToEdit.state
+
+            if (hasChanged) {
+                if (cleanBody.isBlank() && cleanName.isBlank()) {
+                    viewModel?.deleteNote(noteToEdit.id)
+                } else {
+                    viewModel?.updateNote(noteToEdit.copy(
+                        body = cleanBody,
+                        status = tempStatus,
+                        state = showPassword,
+                        lastEdited = LocalDateTime.now(),
+                        aiStatus = tempAiStatus,
+                        nameNote = cleanName
+                    ))
+                }
+            }
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            if(noteToEdit == null) {
+                saveNote()
+            }
+        }
     }
 
     LaunchedEffect(aiResult) {
@@ -230,7 +258,7 @@ fun AddEditNoteScreen(
     }
 
     BackHandler {
-        saveNote()
+        focusManager.clearFocus()
         navController?.popBackStack()
     }
 
@@ -247,7 +275,7 @@ fun AddEditNoteScreen(
                 title = {  },
                 navigationIcon = {
                     IconButton(onClick = {
-                        saveNote()
+                        focusManager.clearFocus()
                         navController?.popBackStack()
                     }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -318,7 +346,9 @@ fun AddEditNoteScreen(
         bottomBar = {
             val navBarHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() // чтобы не залазило на панель навигации
             BottomAppBar(
-                modifier = Modifier.fillMaxWidth().height(30.dp + navBarHeight),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(30.dp + navBarHeight),
                 containerColor = backgroundColorBlack,
                 contentColor = backgroundColorWhite,
                 tonalElevation = 0.dp,

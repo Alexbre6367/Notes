@@ -71,7 +71,7 @@ fun LoginScreen(
     Log.d("MyLog", "User email: ${auth.currentUser?.email}")//проверка
 
     val colorRed = Color(209, 46, 36)
-    val isDarkTheme by themeViewModel.isDarkTheme.collectAsState()
+    val isDarkTheme by themeViewModel.isDarkTheme
     val backgroundColorBlack = if (isDarkTheme) Color.Black else Color.White
     val backgroundColorWhite = if (isDarkTheme) Color.White else Color.Black
 

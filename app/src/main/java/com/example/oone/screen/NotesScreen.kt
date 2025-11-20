@@ -105,7 +105,7 @@ fun NotesScreen(
     val isPlaceActivated by placeViewModel.isPlaceActivated.collectAsState()
     val alignmentEnd = if(isPlaceActivated) Alignment.BottomStart else Alignment.BottomEnd
 
-    val isDarkTheme by themeViewModel.isDarkTheme.collectAsState()
+    val isDarkTheme by themeViewModel.isDarkTheme
     val backgroundColorBlack = if (isDarkTheme) Color.Black else Color.White
     val backgroundColorWhite = if (isDarkTheme) Color.White else Color.Black
     val colorRed = Color(209, 46, 36)
