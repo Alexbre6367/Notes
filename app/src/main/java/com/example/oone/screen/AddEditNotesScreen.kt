@@ -483,7 +483,7 @@ fun AddEditNoteScreen(
                                     selection = TextRange(tempBody.text.length)
                                 )
                             } catch (e: Exception) {
-                                Log.e("MyLog", "Не удалось запросить фокус", e)
+                                Log.e("MyLog", "${e.message}")
                             }
                         }
                     }
