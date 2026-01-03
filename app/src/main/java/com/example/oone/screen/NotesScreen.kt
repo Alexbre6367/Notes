@@ -2,8 +2,11 @@ package com.example.oone.screen
 
 
  import androidx.activity.compose.BackHandler
+ import androidx.compose.foundation.ExperimentalFoundationApi
  import androidx.compose.foundation.background
+ import androidx.compose.foundation.border
  import androidx.compose.foundation.clickable
+ import androidx.compose.foundation.combinedClickable
  import androidx.compose.foundation.interaction.MutableInteractionSource
  import androidx.compose.foundation.layout.Arrangement
  import androidx.compose.foundation.layout.Box
@@ -16,6 +19,7 @@ package com.example.oone.screen
  import androidx.compose.foundation.layout.fillMaxSize
  import androidx.compose.foundation.layout.fillMaxWidth
  import androidx.compose.foundation.layout.height
+ import androidx.compose.foundation.layout.heightIn
  import androidx.compose.foundation.layout.padding
  import androidx.compose.foundation.layout.size
  import androidx.compose.foundation.layout.statusBars
@@ -23,6 +27,7 @@ package com.example.oone.screen
  import androidx.compose.foundation.lazy.LazyColumn
  import androidx.compose.foundation.lazy.items
  import androidx.compose.foundation.rememberScrollState
+ import androidx.compose.foundation.shape.RoundedCornerShape
  import androidx.compose.foundation.verticalScroll
  import androidx.compose.material.icons.Icons
  import androidx.compose.material.icons.automirrored.filled.Send
@@ -32,8 +37,11 @@ package com.example.oone.screen
  import androidx.compose.material.icons.filled.Check
  import androidx.compose.material.icons.filled.Delete
  import androidx.compose.material.icons.filled.Edit
+ import androidx.compose.material.icons.filled.Lock
  import androidx.compose.material.icons.filled.Menu
  import androidx.compose.material.icons.filled.Settings
+ import androidx.compose.material3.Card
+ import androidx.compose.material3.CardDefaults
  import androidx.compose.material3.DrawerValue
  import androidx.compose.material3.ExperimentalMaterial3Api
  import androidx.compose.material3.FloatingActionButton
@@ -62,15 +70,18 @@ package com.example.oone.screen
  import androidx.compose.ui.Alignment
  import androidx.compose.ui.Modifier
  import androidx.compose.ui.graphics.Color
+ import androidx.compose.ui.text.font.FontWeight
+ import androidx.compose.ui.text.style.TextOverflow
  import androidx.compose.ui.unit.dp
  import androidx.compose.ui.unit.sp
  import androidx.fragment.app.FragmentActivity
  import androidx.navigation.NavController
+ import com.example.oone.auth.authenticate
  import com.example.oone.database.notes.Notes
  import com.example.oone.database.viewmodel.NotesViewModel
- import com.example.oone.database.viewmodel.PlaceViewModel
  import com.example.oone.database.viewmodel.ThemeViewModel
  import com.google.firebase.auth.FirebaseAuth
+ import kotlinx.coroutines.delay
  import kotlinx.coroutines.launch
 
 
@@ -80,7 +91,6 @@ fun NotesScreen(
     viewModel: NotesViewModel,
     themeViewModel: ThemeViewModel,
     navController: NavController,
-    placeViewModel: PlaceViewModel,
     activity: FragmentActivity,
 ) {
 
@@ -102,7 +112,7 @@ fun NotesScreen(
     val selectedNoteId by viewModel.selectedNoteId.collectAsState()
     var deleteActivated by remember { mutableStateOf(false) }
 
-    val isPlaceActivated by placeViewModel.isPlaceActivated.collectAsState()
+    val isPlaceActivated by themeViewModel.isPlaceActivated.collectAsState()
     val alignmentEnd = if(isPlaceActivated) Alignment.BottomStart else Alignment.BottomEnd
 
     val isDarkTheme by themeViewModel.isDarkTheme
@@ -419,6 +429,100 @@ fun NotesScreen(
                 }
             }
         )
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun NoteItem(
+    note: Notes,
+    onEdit: () -> Unit,
+    isDarkTheme: Boolean,
+    viewModel: NotesViewModel,
+    activity: FragmentActivity,
+    isSelected: Boolean
+){
+    val borderColor = Color(52, 52, 52)
+
+    val backgroundColorWhite = if (isDarkTheme) Color.White else Color.Black
+    val selectedNoteId by viewModel.selectedNoteId.collectAsState()
+
+    if (note.id in selectedNoteId) {
+        LaunchedEffect(note.id) {
+            delay(10000)
+            viewModel.toggleNoteSelection(note.id)
+        }
+    }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 65.dp, max = 250.dp)
+            .padding(vertical = 4.dp)
+            .combinedClickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() },
+                onClick = {
+                    if(isSelected) {
+                        viewModel.toggleNoteSelection(note.id)
+                    } else {
+                        if (note.state) {
+                            authenticate(activity) {
+                                onEdit()
+                            }
+                        } else {
+                            onEdit()
+                        }
+                    }
+                },
+                onLongClick = {
+                    viewModel.toggleNoteSelection(note.id)
+                }
+            )
+            .border(
+                width = if(note.id in selectedNoteId) 2.dp else 1.dp,
+                color = if(note.id in selectedNoteId) backgroundColorWhite else borderColor,
+                shape = RoundedCornerShape(12.dp)
+            ),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 18.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if(note.state) {
+                Icon(
+                    imageVector = Icons.Default.Lock,
+                    contentDescription = "Lock",
+                    tint = backgroundColorWhite,
+                    modifier = Modifier.size(16.dp)
+                )
+
+                Spacer(modifier = Modifier.width(6.dp))
+            }
+
+            Column(modifier = Modifier.weight(1f)){
+                if (!note.state && note.nameNote.isNotBlank()) {
+                    Text(
+                        text = note.nameNote,
+                        color = backgroundColorWhite,
+                        style = MaterialTheme.typography.bodyLarge,
+                        overflow = TextOverflow.Ellipsis,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+                Text(
+                    text = if(note.state) "Эта заметка скрыта" else note.body,
+                    color = backgroundColorWhite,
+                    style = MaterialTheme.typography.bodyLarge,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
     }
 }
 

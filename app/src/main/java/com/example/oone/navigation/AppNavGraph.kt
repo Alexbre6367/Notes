@@ -15,7 +15,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.oone.database.viewmodel.NotesViewModel
-import com.example.oone.database.viewmodel.PlaceViewModel
 import com.example.oone.database.viewmodel.ThemeViewModel
 import com.example.oone.screen.AddEditNoteScreen
 import com.example.oone.screen.NotesScreen
@@ -29,7 +28,6 @@ fun AppNavGraph(
     viewModel: NotesViewModel,
     themeViewModel: ThemeViewModel,
     navController: NavHostController,
-    placeViewModel: PlaceViewModel,
     activity: FragmentActivity,
 ) {
     Surface(
@@ -45,7 +43,6 @@ fun AppNavGraph(
                     viewModel = viewModel,
                     themeViewModel = themeViewModel,
                     navController = navController,
-                    placeViewModel = placeViewModel,
                     activity = activity
                 )
             }
@@ -198,7 +195,6 @@ fun AppNavGraph(
                     viewModel = viewModel,
                     themeViewModel = themeViewModel,
                     navController = navController,
-                    placeViewModel = placeViewModel
                 )
             }
         }

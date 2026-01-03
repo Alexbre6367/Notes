@@ -1,4 +1,4 @@
-package com.example.oone.database.setting
+package com.example.oone
 
 import android.app.Application
 import android.util.Log

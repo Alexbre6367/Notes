@@ -68,7 +68,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
         isCoreLibraryDesugaringEnabled = true
+    }
 
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.15"
     }
     kotlinOptions {
         jvmTarget = "11"
@@ -80,6 +83,16 @@ kapt{
 }
 
 dependencies {
+    implementation("com.google.android.gms:play-services-mlkit-text-recognition:19.0.1")
+
+
+    implementation("androidx.activity:activity-ktx:1.2.0-alpha08")
+    implementation("androidx.fragment:fragment:1.3.0-alpha08")
+
+    implementation("androidx.glance:glance-appwidget:1.1.1")
+    implementation("androidx.glance:glance-material3:1.1.1")
+    implementation("androidx.glance:glance-material:1.1.1")
+
     implementation("com.google.firebase:firebase-crashlytics-ndk:20.0.0")
     implementation("com.google.firebase:firebase-analytics:23.0.0")
 

@@ -1,10 +1,9 @@
-package com.example.oone.database.ai
+package com.example.oone.ai
 
 import android.util.Log
 import com.example.oone.BuildConfig
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.content
-
 
 
 object Gemini {

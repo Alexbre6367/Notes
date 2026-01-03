@@ -1,17 +1,25 @@
 package com.example.oone.database.viewmodel
 
 import android.app.Application
+import android.content.ContentResolver
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
+import com.example.oone.ai.Gemini
 import com.example.oone.auth.SecureStorage
-import com.example.oone.database.ai.Gemini
 import com.example.oone.database.notes.Notes
 import com.example.oone.database.notes.NotesRoomDatabase
 import com.example.oone.database.repositories.NotesRepository
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -148,5 +156,28 @@ class NotesViewModel(application: Application) : AndroidViewModel(application) {
 
     fun clearAi() {
         _analysisResult.value = null
+    }
+
+    private val _loadingBitmap = MutableStateFlow<Bitmap?>(null)
+    fun recognizeTextFromImage(uri: Uri, contentResolver: ContentResolver) {
+        viewModelScope.launch {
+            try {
+                val bitmap = withContext(Dispatchers.IO) {
+                    val source = ImageDecoder.createSource(contentResolver, uri)
+                    ImageDecoder.decodeBitmap(source).copy(Bitmap.Config.ARGB_8888, true)
+                }
+
+                _loadingBitmap.value = bitmap
+
+                val image = InputImage.fromBitmap(bitmap, 0)
+                val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+                recognizer.process(image)
+                    .addOnSuccessListener { visionText ->
+                        _analysisResult.value = visionText.text
+                    }
+            } catch (e: Exception) {
+                Log.e("MyLog", "${e.message}")
+            }
+        }
     }
 }

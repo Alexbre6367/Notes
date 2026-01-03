@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.oone.database.viewmodel.NotesViewModel
-import com.example.oone.database.viewmodel.PlaceViewModel
 import com.example.oone.database.viewmodel.ThemeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,10 +43,9 @@ fun SettingScreen(
     viewModel: NotesViewModel,
     themeViewModel: ThemeViewModel,
     navController: NavController,
-    placeViewModel: PlaceViewModel,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-    val isPlaceActivated by placeViewModel.isPlaceActivated.collectAsState()
+    val isPlaceActivated by themeViewModel.isPlaceActivated.collectAsState()
     val isDarkTheme by themeViewModel.isDarkTheme
     val backgroundColorBlack = if (isDarkTheme) Color.Black else Color.White
     val backgroundColorWhite = if (isDarkTheme) Color.White else Color.Black
@@ -132,7 +130,7 @@ fun SettingScreen(
                             indication = null,
                             interactionSource = interactionSource
                         ) {
-                            placeViewModel.togglePlacePosition()
+                            themeViewModel.togglePlacePosition()
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -144,7 +142,7 @@ fun SettingScreen(
                     )
                     Switch(
                         checked = isPlaceActivated,
-                        onCheckedChange = { placeViewModel.togglePlacePosition() },
+                        onCheckedChange = { themeViewModel.togglePlacePosition() },
                         Modifier.scale(1.2f),
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = backgroundColorWhite,
