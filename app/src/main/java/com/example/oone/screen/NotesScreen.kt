@@ -80,6 +80,7 @@ package com.example.oone.screen
  import com.example.oone.database.notes.Notes
  import com.example.oone.database.viewmodel.NotesViewModel
  import com.example.oone.database.viewmodel.ThemeViewModel
+ import com.example.oone.ui.theme.colorRed
  import com.google.firebase.auth.FirebaseAuth
  import kotlinx.coroutines.delay
  import kotlinx.coroutines.launch
@@ -118,7 +119,6 @@ fun NotesScreen(
     val isDarkTheme by themeViewModel.isDarkTheme
     val backgroundColorBlack = if (isDarkTheme) Color.Black else Color.White
     val backgroundColorWhite = if (isDarkTheme) Color.White else Color.Black
-    val colorRed = Color(209, 46, 36)
 
     BackHandler(enabled = selectedNoteId.isNotEmpty()) {
         viewModel.clearSelection()
