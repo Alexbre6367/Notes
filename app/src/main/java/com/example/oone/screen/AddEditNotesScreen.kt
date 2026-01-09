@@ -92,6 +92,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 const val localUser = "local_user"
 
@@ -135,7 +136,7 @@ fun AddEditNoteScreen(
         return if (noteDate == today) {
             this.format(DateTimeFormatter.ofPattern("HH:mm"))
         } else {
-            this.format(DateTimeFormatter.ofPattern("d MMMM"))
+            this.format(DateTimeFormatter.ofPattern("d MMM", Locale.ENGLISH))
         }
     }
 
@@ -438,7 +439,7 @@ fun AddEditNoteScreen(
                         modifier = Modifier.align(alignment = Alignment.Center),
                         text = "Edited ${lastEditTime.formatBasedOnDate()}",
                         color = backgroundColorWhite,
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.bodySmall,
                         fontSize = 17.sp
                     )
 

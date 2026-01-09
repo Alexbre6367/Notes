@@ -21,10 +21,6 @@ class ThemeViewModel(
     private val _isDarkTheme = mutableStateOf(initialDarkTheme)
     val isDarkTheme: State<Boolean> = _isDarkTheme
 
-    fun toggleTheme() {
-        _isDarkTheme.value = !_isDarkTheme.value
-    }
-
     private val dataStore = application.dataStore
 
     private val _isPlaceActivated = MutableStateFlow(false)
@@ -32,6 +28,16 @@ class ThemeViewModel(
 
     private companion object {
         val PLACE_ACTIVATED = booleanPreferencesKey("place_activated")
+        val DARK_THEME = booleanPreferencesKey("dark_theme")
+    }
+
+    fun toggleTheme() {
+        _isDarkTheme.value = !_isDarkTheme.value
+        viewModelScope.launch {
+            dataStore.edit { preferences ->
+                preferences[DARK_THEME] = _isDarkTheme.value
+            }
+        }
     }
 
     init {
@@ -42,6 +48,9 @@ class ThemeViewModel(
         viewModelScope.launch {
             dataStore.data.collect { preferences ->
                 _isPlaceActivated.value = preferences[PLACE_ACTIVATED] ?: false
+                preferences[DARK_THEME]?.let { savedTheme ->
+                    _isDarkTheme.value = savedTheme
+                }
             }
         }
     }
