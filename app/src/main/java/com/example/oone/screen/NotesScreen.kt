@@ -70,7 +70,6 @@ package com.example.oone.screen
  import androidx.compose.ui.Alignment
  import androidx.compose.ui.Modifier
  import androidx.compose.ui.graphics.Color
- import androidx.compose.ui.text.font.FontWeight
  import androidx.compose.ui.text.style.TextOverflow
  import androidx.compose.ui.unit.dp
  import androidx.compose.ui.unit.sp
@@ -104,7 +103,6 @@ fun NotesScreen(
                 .thenByDescending { it.id }
         )
     }
-
     val selectedId by viewModel.selectedNoteId.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -146,7 +144,7 @@ fun NotesScreen(
                         style = MaterialTheme.typography.titleLarge
                     )
                     NavigationDrawerItem(
-                        label = { Text("Заметки") },
+                        label = { Text("Notes") },
                         selected = false,
                         icon = {
                             Icon(
@@ -167,7 +165,7 @@ fun NotesScreen(
                     )
                     Spacer(Modifier.height(12.dp))
                     NavigationDrawerItem(
-                        label = { Text("Настройки") },
+                        label = { Text("Settings") },
                         selected = false,
                         icon = { Icon(Icons.Default.Settings, contentDescription = null) },
                         badge = {  },
@@ -243,7 +241,7 @@ fun NotesScreen(
                         ) {
                             Text(
                                 text = "Notes",
-                                fontSize = 24.sp
+                                style = MaterialTheme.typography.titleLarge
                             )
                         }
                     },
@@ -321,7 +319,7 @@ fun NotesScreen(
                                     if (pinnedNotesSorted.isNotEmpty()) {
                                         item {
                                             Text(
-                                                text = "Закрепленные",
+                                                text = "Pinned",
                                                 modifier = Modifier.padding(
                                                     start = 16.dp,
                                                     top = 8.dp,
@@ -346,7 +344,7 @@ fun NotesScreen(
                                     if (aiNotesSorted.isNotEmpty()) {
                                         item {
                                             Text(
-                                                text = "С AI",
+                                                text = "AI",
                                                 modifier = Modifier.padding(
                                                     start = 16.dp,
                                                     top = 8.dp,
@@ -371,7 +369,7 @@ fun NotesScreen(
                                     if (otherNotesSorted.isNotEmpty()) {
                                         item {
                                             Text(
-                                                text = "Другие",
+                                                text = "Other",
                                                 modifier = Modifier.padding(
                                                     start = 16.dp,
                                                     top = 16.dp,
@@ -508,15 +506,14 @@ fun NoteItem(
                     Text(
                         text = note.nameNote,
                         color = backgroundColorWhite,
-                        style = MaterialTheme.typography.bodyLarge,
+                        style = MaterialTheme.typography.titleLarge,
                         overflow = TextOverflow.Ellipsis,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
+                        fontSize = 26.sp
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                 }
                 Text(
-                    text = if(note.state) "Эта заметка скрыта" else note.body,
+                    text = if(note.state) "This note is hidden" else note.body,
                     color = backgroundColorWhite,
                     style = MaterialTheme.typography.bodyLarge,
                     overflow = TextOverflow.Ellipsis
@@ -545,7 +542,7 @@ private fun EmptyState(isDarkTheme: Boolean) {
             modifier = Modifier.size(120.dp)
         )
         Text(
-            text = "Здесь будут ваши заметки",
+            text = "Your notes will go here",
             color = backgroundColorWhite,
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(top = 16.dp)

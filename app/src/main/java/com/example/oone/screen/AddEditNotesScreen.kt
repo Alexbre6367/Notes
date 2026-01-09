@@ -77,8 +77,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -438,9 +436,10 @@ fun AddEditNoteScreen(
 
                     Text(
                         modifier = Modifier.align(alignment = Alignment.Center),
-                        text = "Изменено ${lastEditTime.formatBasedOnDate()}",
+                        text = "Edited ${lastEditTime.formatBasedOnDate()}",
                         color = backgroundColorWhite,
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontSize = 17.sp
                     )
 
                     IconButton(
@@ -502,7 +501,8 @@ fun AddEditNoteScreen(
                         },
                         placeholder = {
                             Text(
-                                "Название",
+                                "Name",
+                                style = MaterialTheme.typography.titleLarge,
                                 fontSize = 24.sp
                             )
                         }, //label text уходит на рамку, placeholder text пропадает при взаимодействии
@@ -515,10 +515,10 @@ fun AddEditNoteScreen(
                             disabledBorderColor = Color.Transparent,
                             errorBorderColor = Color.Transparent
                         ),
-                        textStyle = TextStyle(
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold
+                        textStyle = MaterialTheme.typography.titleLarge.copy(
+                            fontSize = 24.sp
                         )
+
                     )
                     if(tempAiStatus) {
                         AnimationGemini()
@@ -528,7 +528,7 @@ fun AddEditNoteScreen(
                             onValueChange = {
                                 tempBody = it
                             },
-                            placeholder = { Text("Текст") }, //label text уходит на рамку, placeholder text пропадает при взаимодействии
+                            placeholder = { Text("Text", style = MaterialTheme.typography.bodyLarge) }, //label text уходит на рамку, placeholder text пропадает при взаимодействии
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .focusRequester(focusRequester),
@@ -538,7 +538,8 @@ fun AddEditNoteScreen(
                                 unfocusedBorderColor = Color.Transparent,
                                 disabledBorderColor = Color.Transparent,
                                 errorBorderColor = Color.Transparent
-                            )
+                            ),
+                            textStyle = MaterialTheme.typography.bodyLarge
                         )
                     }
                 }

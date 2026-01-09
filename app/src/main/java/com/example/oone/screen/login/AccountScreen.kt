@@ -5,6 +5,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -21,6 +23,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -33,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import com.example.oone.auth.authenticate
@@ -54,7 +58,7 @@ fun AccountScreen(
     Log.d("MyLog", "User email: ${auth.currentUser?.email}")
 
     val currentUser = FirebaseAuth.getInstance().currentUser
-    val emailUser = currentUser?.email ?: "Не авторизован"
+    val emailUser = currentUser?.email ?: "Not logged in"
 
 
     val colorRed = Color(209, 46, 36)
@@ -63,6 +67,7 @@ fun AccountScreen(
     val backgroundColorWhite = if (isDarkTheme) Color.White else Color.Black
 
     var isDeleteAccount by remember { mutableStateOf(false) }
+    val interactionSource = remember { MutableInteractionSource() }
 
     val currentEmail = viewModel.userEmail.value
     val currentPassword = viewModel.userPassword.value
@@ -76,6 +81,13 @@ fun AccountScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(backgroundColorBlack)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = {
+                    isDeleteAccount = false
+                }
+            )
     ) {
         Box(modifier = Modifier.padding(start = 8.dp, top = 50.dp)) {
             IconButton(
@@ -115,13 +127,13 @@ fun AccountScreen(
                             if (task.isSuccessful) {
                                 Toast.makeText(
                                     context,
-                                    "Письмо для смены пароля отправлено на $emailUser",
+                                    "Password reset email sent to $emailUser",
                                     Toast.LENGTH_LONG
                                 ).show()
                             } else {
                                 Toast.makeText(
                                     context,
-                                    "Ошибка отправки письма",
+                                    "Error sending email",
                                     Toast.LENGTH_LONG
                                 ).show()
                                 Log.d("MyLog", "Ошибка сброса пароля")
@@ -137,7 +149,7 @@ fun AccountScreen(
                 )
             ) {
                 Text(
-                    text = "Смена пароля",
+                    text = "Change password",
                     color = backgroundColorWhite
                 )
             }
@@ -156,7 +168,7 @@ fun AccountScreen(
                 shape = RoundedCornerShape(50.dp),
                 colors = ButtonDefaults.buttonColors(backgroundColorWhite)
             ) {
-                Text("Выйти")
+                Text("Log out", style = MaterialTheme.typography.bodyLarge)
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -186,8 +198,11 @@ fun AccountScreen(
                 colors = ButtonDefaults.buttonColors(backgroundColorWhite)
             ) {
                 Text(
-                    text = if(isDeleteAccount) "Все данные будут удалены" else "Удалить аккаунт",
-                    color = if (isDeleteAccount) colorRed else backgroundColorBlack
+                    text = if(isDeleteAccount) "Confirm deletion" else "Delete account",
+                    color = if (isDeleteAccount) colorRed else backgroundColorBlack,
+                    style = if (isDeleteAccount) MaterialTheme.typography.titleLarge.copy(
+                        fontSize = 20.sp
+                    ) else MaterialTheme.typography.bodyLarge
                 )
             }
         }

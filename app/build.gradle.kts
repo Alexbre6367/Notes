@@ -83,6 +83,7 @@ kapt{
 }
 
 dependencies {
+    implementation("androidx.compose.ui:ui-text-google-fonts:1.7.0")
     implementation("com.google.android.gms:play-services-mlkit-text-recognition:19.0.1")
 
 

@@ -19,7 +19,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -45,12 +46,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.oone.database.viewmodel.NotesViewModel
 import com.example.oone.database.viewmodel.ThemeViewModel
+import com.example.oone.ui.theme.googleBlue
+import com.example.oone.ui.theme.googleGreen
+import com.example.oone.ui.theme.googleRed
+import com.example.oone.ui.theme.googleYellow
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 
@@ -73,6 +82,7 @@ fun LoginScreen(
     val isDarkTheme by themeViewModel.isDarkTheme
     val backgroundColorBlack = if (isDarkTheme) Color.Black else Color.White
     val backgroundColorWhite = if (isDarkTheme) Color.White else Color.Black
+
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -145,9 +155,11 @@ fun LoginScreen(
             Column(modifier = Modifier.padding(horizontal = 24.dp)) {
                 Spacer(modifier = Modifier.height(60.dp))
                 Text(
-                    text = "Войти",
+                    text = "Sign In",
                     color = backgroundColorWhite,
-                    style = MaterialTheme.typography.headlineLarge
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontSize = 28.sp
+                    )
                 )
 
                 Spacer(modifier = Modifier.height(48.dp))
@@ -156,7 +168,7 @@ fun LoginScreen(
                     onValueChange = {
                         emailState.value = it
                     },
-                    placeholder = { Text("Адрес эл. почты") },
+                    placeholder = { Text("Email") },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(10.dp),
@@ -166,7 +178,8 @@ fun LoginScreen(
                         unfocusedBorderColor = animatedColorEmail,
                         disabledBorderColor = animatedColorEmail,
                         errorBorderColor = animatedColorEmail
-                    )
+                    ),
+                    textStyle = MaterialTheme.typography.bodyLarge
                 )
 
                 Spacer(modifier = Modifier.height(32.dp))
@@ -175,16 +188,18 @@ fun LoginScreen(
                     onValueChange = {
                         passwordState.value = it
                     },
-                    placeholder = { Text("Пароль(от 6 символов)") },
+                    placeholder = { Text("Password (6+ characters)") },
                     singleLine = true,
                     visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
-                        IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
-                            Icon(
-                                imageVector = Icons.Default.Info,
-                                contentDescription = "info",
-                                tint = if (passwordVisibility) colorRed else Color.Gray
-                            )
+                        if(passwordState.value.isNotEmpty()) {
+                            IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
+                                Icon(
+                                    imageVector = if (passwordVisibility) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                    contentDescription = "info",
+                                    tint = if (passwordVisibility) colorRed else Color.Gray
+                                )
+                            }
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
@@ -195,7 +210,8 @@ fun LoginScreen(
                         unfocusedBorderColor = animatedColorPassword,
                         disabledBorderColor = animatedColorPassword,
                         errorBorderColor = animatedColorPassword
-                    )
+                    ),
+                    textStyle = MaterialTheme.typography.bodyLarge
                 )
 
                 Spacer(modifier = Modifier.height(32.dp))
@@ -229,7 +245,7 @@ fun LoginScreen(
                     colors = ButtonDefaults.buttonColors(backgroundColorWhite)
 
                 ) {
-                    Text("Продолжить", color = backgroundColorBlack)
+                    Text("Continue", color = backgroundColorBlack)
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -242,13 +258,13 @@ fun LoginScreen(
                                     if (task.isSuccessful) {
                                         Toast.makeText(
                                             context,
-                                            "Письмо для смены пароля отправлено на $email",
+                                            "Password reset email sent to $email",
                                             Toast.LENGTH_LONG
                                         ).show()
                                     } else {
                                         Toast.makeText(
                                             context,
-                                            "Ошибка отправки письма",
+                                            "Error sending email",
                                             Toast.LENGTH_LONG
                                         ).show()
                                         Log.d("MyLog", "Ошибка сброса пароля")
@@ -257,7 +273,7 @@ fun LoginScreen(
                         } else {
                             Toast.makeText(
                                 context,
-                                "Введите почту",
+                                "Enter your email",
                                 Toast.LENGTH_LONG
                             ).show()
                             isErrorEmail = true
@@ -272,7 +288,7 @@ fun LoginScreen(
                     )
                 ) {
                     Text(
-                        text = "Забыли пароль?",
+                        text = "Forgot your password?",
                         color = backgroundColorWhite
                     )
                 }
@@ -291,8 +307,11 @@ fun LoginScreen(
                         thickness = DividerDefaults.Thickness, color = Color.Gray
                     )
                     Text(
-                        text = "или",
+                        text = "or",
                         modifier = Modifier.padding(horizontal = 8.dp),
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontSize = 18.sp
+                        ),
                         color = Color.Gray
                     )
                     HorizontalDivider(
@@ -316,7 +335,16 @@ fun LoginScreen(
                     colors = ButtonDefaults.buttonColors(backgroundColorWhite)
                 ) {
                     Text(
-                        text = "Продолжить c Google",
+                        text = buildAnnotatedString {
+                            append("Continue with ")
+
+                            withStyle(style = SpanStyle(color = googleBlue)) { append("G") }
+                            withStyle(style = SpanStyle(color = googleRed)) { append("o") }
+                            withStyle(style = SpanStyle(color = googleYellow)) { append("o") }
+                            withStyle(style = SpanStyle(color = googleBlue)) { append("g") }
+                            withStyle(style = SpanStyle(color = googleGreen)) { append("l") }
+                            withStyle(style = SpanStyle(color = googleRed)) { append("e") }
+                        },
                         color = backgroundColorBlack,
                     )
                 }
@@ -340,7 +368,7 @@ fun LoginScreen(
                         } else {
                             isErrorEmail = true
                             isErrorPassword = true
-                            Log.d("MyLog", "Пустое поле")
+                            Log.d("MyLog", "Empty field")
                         }
                         keyboardController?.hide()
                         focusManager.clearFocus()
@@ -352,14 +380,14 @@ fun LoginScreen(
                     colors = ButtonDefaults.buttonColors(backgroundColorWhite)
                 ) {
                     Text(
-                        text = "Создать учетную запись",
+                        text = "Sign Up",
                         color = backgroundColorBlack
                     )
                 }
                 if (openDialog) {
                     AlertDialog(
                         onDismissRequest = { openDialog = false },
-                        title = { Text(text = "В разработке") },
+                        title = { Text(text = "In development") },
                         confirmButton = {
                             Button(
                                 { openDialog = false },

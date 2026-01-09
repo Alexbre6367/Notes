@@ -6,7 +6,6 @@ import androidx.fragment.app.FragmentActivity
 
 
 fun authenticate(context: FragmentActivity, onAuthenticationSucceeded: () -> Unit) {
-
     val executor = context.mainExecutor
     val biometricPrompt = BiometricPrompt(
         context,
@@ -20,8 +19,8 @@ fun authenticate(context: FragmentActivity, onAuthenticationSucceeded: () -> Uni
         })
 
     val promptInfo = BiometricPrompt.PromptInfo.Builder()
-        .setTitle("Разблокируйте, чтобы продолжить")
-        .setNegativeButtonText("Отмена")
+        .setTitle("Unlock to continue")
+        .setNegativeButtonText("Cancel")
         .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
         .build()
     biometricPrompt.authenticate(promptInfo)

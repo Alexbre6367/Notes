@@ -30,7 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -70,11 +69,11 @@ fun SettingScreen(
                     )
                 }
                 Text(
-                    text = "Настройки",
+                    text = "Settings",
                     modifier = Modifier.padding(start = 8.dp),
                     fontSize = 20.sp,
                     color = backgroundColorWhite,
-                    style = MaterialTheme.typography.headlineLarge
+                    style = MaterialTheme.typography.titleLarge
                 )
             }
             Column(
@@ -83,11 +82,11 @@ fun SettingScreen(
             ) {
                 Spacer(Modifier.height(16.dp))
                 Text(
-                    text = "Параметры отображения",
+                    text = "Display options",
                     modifier = Modifier.padding(start = 8.dp),
-                    fontSize = 25.sp,
+                    fontSize = 30.sp,
                     color = backgroundColorWhite,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleLarge
                 )
                 Spacer(Modifier.height(28.dp))
                 Row(modifier = Modifier
@@ -101,10 +100,10 @@ fun SettingScreen(
                     },
                     verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = "Светлая тема",
+                        text = "Light theme",
                         color = backgroundColorWhite,
                         modifier = Modifier.weight(1f),
-                        fontSize = 20.sp
+                        fontSize = 18.sp
                     )
                     Switch(
                         checked =! isDarkTheme,
@@ -135,10 +134,10 @@ fun SettingScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Для левшей",
+                        text = "For left-handers",
                         color = backgroundColorWhite,
                         modifier = Modifier.weight(1f),
-                        fontSize = 20.sp
+                        fontSize = 18.sp
                     )
                     Switch(
                         checked = isPlaceActivated,

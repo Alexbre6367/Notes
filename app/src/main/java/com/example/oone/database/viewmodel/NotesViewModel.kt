@@ -147,7 +147,7 @@ class NotesViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             val result = Gemini.analyze(text)
             if(result == null) {
-                _errorLog.send("Ошибка обработки")
+                _errorLog.send("Processing error")
             } else {
                 _analysisResult.value = result
             }
