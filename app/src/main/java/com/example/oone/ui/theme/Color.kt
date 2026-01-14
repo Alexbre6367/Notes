@@ -15,3 +15,12 @@ val googleBlue = Color(0xFF4285F4)
 val googleRed = Color(0xFFEA4335)
 val googleYellow = Color(0xFFFBBC05)
 val googleGreen = Color(0xFF34A853)
+
+val borderColor = Color(26, 26, 26)
+
+val geminiColors = listOf(
+    Color(0xFF4285F4),
+    Color(0xFF9B72CB),
+    Color(0xFFD96570),
+    Color(0xFF4285F4)
+)

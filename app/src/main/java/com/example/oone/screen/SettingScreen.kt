@@ -100,7 +100,7 @@ fun SettingScreen(
                     },
                     verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = "Light theme",
+                        text = "Light theme(beta)",
                         color = backgroundColorWhite,
                         modifier = Modifier.weight(1f),
                         fontSize = 18.sp

@@ -1,33 +1,28 @@
 package com.example.oone.ai
 
 import android.util.Log
-import com.example.oone.BuildConfig
-import com.google.ai.client.generativeai.GenerativeModel
-import com.google.ai.client.generativeai.type.content
+import com.google.firebase.Firebase
+import com.google.firebase.ai.ai
+import com.google.firebase.ai.type.GenerativeBackend
 
 
 object Gemini {
-    private val model = GenerativeModel(
-        modelName = "gemini-2.5-flash-lite",
-        apiKey = BuildConfig.GEMINI_API_KEY
-    )
+
+    private val model = Firebase.ai(backend = GenerativeBackend.googleAI())
+        .generativeModel("gemini-2.5-flash-lite")
 
     suspend fun analyze(descriptor: String): String? {
         Log.d("MyLog", "Начало анализа: '$descriptor'")
         return try {
-            val response = model.generateContent(
-                content {
-                    text(
-                        """
-                        Ты помощник для структурирования, анализа
-                        и добавления своих комментариев(кратко, комментарии должны соотвествовать контексту, и смотря какое настроение у текста,
-                        такие и комментарии(поддержка, мотивация, понимании и т.п) заметки. В итоге должна получиться готовая заметка которой можно пользоваться. 
-                        В первой строчке твоего ответа укажи название для заметки
-                        Текст: $descriptor
+            val prompt = """
+                        Твоя задача помочь пользователю в приложении заметок. 
+                        В первой строчке твоего ответа укажи название для заметки, в следующей строке сразу заметка.
+                        Твой ответ должен быть в виде готовой, структурированной заметки 
+                        Язык ответа должен быть таким же как в тексте ниже
+                        $descriptor
                         """.trimIndent()
-                    )
-                }
-            )
+
+            val response = model.generateContent(prompt)
             val analysisResult = response.text // Извлекаем текст из ответа.
             Log.d("MyLog", "Анализ успешно завершен. Результат: '$analysisResult'") // Обновлен лог успеха
             analysisResult

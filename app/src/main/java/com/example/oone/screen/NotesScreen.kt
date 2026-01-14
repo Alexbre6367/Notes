@@ -2,6 +2,9 @@ package com.example.oone.screen
 
 
  import androidx.activity.compose.BackHandler
+ import androidx.compose.animation.core.Spring
+ import androidx.compose.animation.core.animateFloatAsState
+ import androidx.compose.animation.core.spring
  import androidx.compose.foundation.ExperimentalFoundationApi
  import androidx.compose.foundation.background
  import androidx.compose.foundation.border
@@ -70,6 +73,7 @@ package com.example.oone.screen
  import androidx.compose.ui.Alignment
  import androidx.compose.ui.Modifier
  import androidx.compose.ui.graphics.Color
+ import androidx.compose.ui.graphics.graphicsLayer
  import androidx.compose.ui.text.style.TextOverflow
  import androidx.compose.ui.unit.dp
  import androidx.compose.ui.unit.sp
@@ -79,6 +83,7 @@ package com.example.oone.screen
  import com.example.oone.database.notes.Notes
  import com.example.oone.database.viewmodel.NotesViewModel
  import com.example.oone.database.viewmodel.ThemeViewModel
+ import com.example.oone.ui.theme.borderColor
  import com.example.oone.ui.theme.colorRed
  import com.google.firebase.auth.FirebaseAuth
  import kotlinx.coroutines.delay
@@ -440,8 +445,6 @@ fun NoteItem(
     activity: FragmentActivity,
     isSelected: Boolean
 ){
-    val borderColor = Color(52, 52, 52)
-
     val backgroundColorWhite = if (isDarkTheme) Color.White else Color.Black
     val selectedNoteId by viewModel.selectedNoteId.collectAsState()
 
@@ -452,11 +455,23 @@ fun NoteItem(
         }
     }
 
+    val scale by animateFloatAsState(
+            targetValue = if(note.id in selectedNoteId) 0.96f else 1f,
+            animationSpec = spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessLow
+            )
+    )
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(min = 65.dp, max = 250.dp)
-            .padding(vertical = 4.dp)
+            .padding(vertical = 4.dp, horizontal = 2.dp)
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            }
             .combinedClickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
@@ -480,9 +495,10 @@ fun NoteItem(
             .border(
                 width = if(note.id in selectedNoteId) 2.dp else 1.dp,
                 color = if(note.id in selectedNoteId) backgroundColorWhite else borderColor,
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(24.dp)
             ),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(containerColor = borderColor),
     ) {
         Row(
             modifier = Modifier
@@ -508,7 +524,8 @@ fun NoteItem(
                         color = backgroundColorWhite,
                         style = MaterialTheme.typography.titleLarge,
                         overflow = TextOverflow.Ellipsis,
-                        fontSize = 26.sp
+                        fontSize = 30.sp,
+                        maxLines = 1
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                 }

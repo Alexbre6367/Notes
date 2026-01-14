@@ -1,6 +1,10 @@
 package com.example.oone.navigation
 
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
@@ -49,16 +53,28 @@ fun AppNavGraph(
             composable(
                 route = "add_note",
                 enterTransition = {
-                    slideInHorizontally(
-                        initialOffsetX = { it },
-                        animationSpec = tween(durationMillis = 300)
-                    )
+                    scaleIn(
+                        initialScale = 0.8f,
+                        animationSpec = tween(300)
+                    ) + fadeIn(animationSpec = tween(300))
+                },
+                exitTransition = {
+                    scaleOut(
+                        targetScale = 1.1f,
+                        animationSpec = tween(300)
+                    ) + fadeOut(animationSpec = tween(300))
+                },
+                popEnterTransition = {
+                    scaleIn(
+                        initialScale = 1.1f,
+                        animationSpec = tween(300)
+                    ) + fadeIn(animationSpec = tween(300))
                 },
                 popExitTransition = {
-                    slideOutHorizontally(
-                        targetOffsetX = { it },
-                        animationSpec = tween(durationMillis = 300)
-                    )
+                    scaleOut(
+                        targetScale = 0.8f,
+                        animationSpec = tween(300)
+                    ) + fadeOut(animationSpec = tween(300))
                 }
             ) {
                 AddEditNoteScreen(
@@ -73,16 +89,28 @@ fun AppNavGraph(
                     type = NavType.IntType // марштрут определяет Id заметки
                 }),
                 enterTransition = {
-                    slideInHorizontally(
-                        initialOffsetX = { it },
-                        animationSpec = tween(durationMillis = 300)
-                    )
+                    scaleIn(
+                        initialScale = 0.8f,
+                        animationSpec = tween(200)
+                    ) + fadeIn(animationSpec = tween(200))
+                },
+                exitTransition = {
+                    scaleOut(
+                        targetScale = 1.1f,
+                        animationSpec = tween(200)
+                    ) + fadeOut(animationSpec = tween(200))
+                },
+                popEnterTransition = {
+                    scaleIn(
+                        initialScale = 1.1f,
+                        animationSpec = tween(200)
+                    ) + fadeIn(animationSpec = tween(200))
                 },
                 popExitTransition = {
-                    slideOutHorizontally(
-                        targetOffsetX = { it },
-                        animationSpec = tween(durationMillis = 300)
-                    )
+                    scaleOut(
+                        targetScale = 0.8f,
+                        animationSpec = tween(200)
+                    ) + fadeOut(animationSpec = tween(200))
                 }
             ) { backStackEntry ->
                 val noteId = backStackEntry.arguments?.getInt("noteId") // извлечение переданного Id

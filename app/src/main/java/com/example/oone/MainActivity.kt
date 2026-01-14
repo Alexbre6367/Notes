@@ -5,8 +5,12 @@ import android.app.Application
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.text.selection.LocalTextSelectionColors
+import androidx.compose.foundation.text.selection.TextSelectionColors
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
@@ -19,6 +23,7 @@ import com.example.oone.database.viewmodel.ThemeViewModel
 import com.example.oone.database.viewmodel.ThemeViewModelFactory
 import com.example.oone.navigation.AppNavGraph
 import com.example.oone.ui.theme.OOneTheme
+import com.example.oone.ui.theme.colorRed
 
 class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,19 +51,28 @@ class MainActivity : FragmentActivity() {
             }
 
             OOneTheme(darkTheme = isDarkTheme) {
-                val navController = rememberNavController()
-                val context = LocalContext.current
-                val viewModel: NotesViewModel = viewModel(
-                    factory = NotesViewModelFactory(context.applicationContext as Application)
-                )
-                val activity = context as FragmentActivity
+                val customColors = remember {
+                    TextSelectionColors(
+                        handleColor = colorRed,
+                        backgroundColor = colorRed.copy(alpha = 0.4f)
+                    )
+                }
 
-                AppNavGraph(
-                    viewModel = viewModel,
-                    themeViewModel = themeViewModel,
-                    navController = navController,
-                    activity = activity
-                )
+                CompositionLocalProvider(LocalTextSelectionColors provides customColors) {
+                    val navController = rememberNavController()
+                    val context = LocalContext.current
+                    val viewModel: NotesViewModel = viewModel(
+                        factory = NotesViewModelFactory(context.applicationContext as Application)
+                    )
+                    val activity = context as FragmentActivity
+
+                    AppNavGraph(
+                        viewModel = viewModel,
+                        themeViewModel = themeViewModel,
+                        navController = navController,
+                        activity = activity
+                    )
+                }
             }
 
         }

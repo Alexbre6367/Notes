@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.oone.database.viewmodel.NotesViewModel
 import com.example.oone.database.viewmodel.ThemeViewModel
+import com.example.oone.ui.theme.borderColor
 import com.example.oone.ui.theme.googleBlue
 import com.example.oone.ui.theme.googleGreen
 import com.example.oone.ui.theme.googleRed
@@ -304,7 +305,7 @@ fun LoginScreen(
                         modifier = Modifier
                             .weight(1f)
                             .height(1.dp),
-                        thickness = DividerDefaults.Thickness, color = Color.Gray
+                        thickness = DividerDefaults.Thickness, color = borderColor
                     )
                     Text(
                         text = "or",
@@ -312,13 +313,13 @@ fun LoginScreen(
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontSize = 18.sp
                         ),
-                        color = Color.Gray
+                        color = borderColor
                     )
                     HorizontalDivider(
                         modifier = Modifier
                             .weight(1f)
                             .height(1.dp),
-                        thickness = DividerDefaults.Thickness, color = Color.Gray
+                        thickness = DividerDefaults.Thickness, color = borderColor
                     )
                 }
 

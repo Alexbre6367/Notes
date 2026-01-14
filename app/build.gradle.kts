@@ -10,17 +10,6 @@ plugins {
     id("com.google.firebase.crashlytics")
 }
 
-
-
-val localProperties = Properties()
-val localPropertiesFile = rootProject.file("local.properties")
-if (localPropertiesFile.exists()) {
-    localProperties.load(FileInputStream(localPropertiesFile))
-}
-val geminiApiKey = localProperties.getProperty("GEMINI_API_KEY") ?: ""
-
-
-
 android {
     namespace = "com.example.oone"
     compileSdk = 35
@@ -38,8 +27,6 @@ android {
         versionName = "0.9.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        buildConfigField("String", "GEMINI_API_KEY", "\"$geminiApiKey\"")
     }
 
 
@@ -86,14 +73,11 @@ dependencies {
     implementation("androidx.compose.ui:ui-text-google-fonts:1.7.0")
     implementation("com.google.android.gms:play-services-mlkit-text-recognition:19.0.1")
 
-
-    implementation("androidx.activity:activity-ktx:1.2.0-alpha08")
-    implementation("androidx.fragment:fragment:1.3.0-alpha08")
-
     implementation("androidx.glance:glance-appwidget:1.1.1")
     implementation("androidx.glance:glance-material3:1.1.1")
     implementation("androidx.glance:glance-material:1.1.1")
 
+    implementation("com.google.firebase:firebase-ai")
     implementation("com.google.firebase:firebase-crashlytics-ndk:20.0.0")
     implementation("com.google.firebase:firebase-analytics:23.0.0")
 
@@ -129,7 +113,6 @@ dependencies {
 
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
-    implementation(libs.generativeai)
     kapt("androidx.room:room-compiler:2.6.1")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
