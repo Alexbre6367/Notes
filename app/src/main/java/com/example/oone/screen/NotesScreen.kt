@@ -280,7 +280,7 @@ fun NotesScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(backgroundColorBlack)
-                        .padding(padding)
+                        .padding(top = padding.calculateTopPadding())
                         .clickable(
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() }
