@@ -30,7 +30,7 @@ data class Notes(
 
     var aiStatus: Boolean = false,
 
-    var nameNote: String = ""
+    var nameNote: String = "",
 
 ) {
     fun toMap(ownerId: String?): Map<String, Any?> = mapOf(

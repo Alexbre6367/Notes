@@ -1,24 +1,22 @@
 [versions]
-agp = "8.11.0"
-kotlin = "2.0.21"
-coreKtx = "1.15.0"
+agp = "8.11.2"
+kotlin = "2.2.0"
+coreKtx = "1.18.0"
 junit = "4.13.2"
-junitVersion = "1.2.1"
-espressoCore = "3.6.1"
-lifecycleRuntimeKtx = "2.8.7"
-activityCompose = "1.10.1"
-composeBom = "2024.09.00"
-roomKtx = "2.6.1"
+junitVersion = "1.3.0"
+espressoCore = "3.7.0"
+lifecycleRuntimeKtx = "2.10.0"
+activityCompose = "1.13.0"
+composeBom = "2026.04.01"
+roomKtx = "2.8.4"
 biometric = "1.2.0-alpha05"
-gmsVersion = "4.4.2"
-boomVersion = "34.7.0"
+gmsVersion = "4.4.4"
+boomVersion = "34.12.0"
 
 [libraries]
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "boomVersion" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth"}
-
-
 
 androidx-biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }

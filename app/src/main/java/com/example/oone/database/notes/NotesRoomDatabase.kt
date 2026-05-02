@@ -18,7 +18,7 @@ abstract class NotesRoomDatabase : RoomDatabase() {
     companion object {
         private var INSTANCE: NotesRoomDatabase? = null
 
-        fun getInstance(context: Context): NotesRoomDatabase? {
+        fun getInstance(context: Context): NotesRoomDatabase {
             synchronized(this) {
                 var instance = INSTANCE
                 if (instance == null) {
@@ -50,7 +50,7 @@ abstract class NotesRoomDatabase : RoomDatabase() {
 
         private val MIGRATION_8_9= object : Migration(8, 9) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                db.execSQL("ALTER TABLE note ADD COLUMN nameNote  TEXT NOT NULL DEFAULT ''")
+                db.execSQL("ALTER TABLE note ADD COLUMN nameNote TEXT NOT NULL DEFAULT ''")
             }
         }
         val MIGRATION_9_10 = object : Migration(9, 10) {

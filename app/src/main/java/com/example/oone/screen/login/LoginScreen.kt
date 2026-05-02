@@ -63,6 +63,7 @@ import com.example.oone.ui.theme.googleRed
 import com.example.oone.ui.theme.googleYellow
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -105,14 +106,14 @@ fun LoginScreen(
 
     if(isErrorEmail) {
         LaunchedEffect(Unit) {
-            delay(5000)
+            delay(5000.milliseconds)
             isErrorEmail = false
         }
     }
 
     if(isErrorPassword) {
         LaunchedEffect(Unit) {
-            delay(5000)
+            delay(5000.milliseconds)
             isErrorPassword = false
         }
     }
@@ -353,7 +354,7 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(24.dp))
                 Button(
                     onClick = {
-                        if (emailState.value.isNotBlank() && passwordState.value.length >= 4) {
+                        if (emailState.value.isNotBlank() && passwordState.value.isNotBlank()) {
                             signUp(auth, emailState.value, passwordState.value) { isSuccess ->
                                 if (isSuccess) {
                                     viewModel.setUserCredentials(

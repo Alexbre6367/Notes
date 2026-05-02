@@ -46,6 +46,7 @@ fun SettingScreen(
     val interactionSource = remember { MutableInteractionSource() }
     val isPlaceActivated by themeViewModel.isPlaceActivated.collectAsState()
     val isDarkTheme by themeViewModel.isDarkTheme
+    val isLocalAi by viewModel.localAi.collectAsState()
     val backgroundColorBlack = if (isDarkTheme) Color.Black else Color.White
     val backgroundColorWhite = if (isDarkTheme) Color.White else Color.Black
 
@@ -106,7 +107,7 @@ fun SettingScreen(
                         fontSize = 18.sp
                     )
                     Switch(
-                        checked =! isDarkTheme,
+                        checked = !isDarkTheme,
                         onCheckedChange = { themeViewModel.toggleTheme() },
                         Modifier.scale(1.2f),
                         colors = SwitchDefaults.colors(
@@ -142,6 +143,40 @@ fun SettingScreen(
                     Switch(
                         checked = isPlaceActivated,
                         onCheckedChange = { themeViewModel.togglePlacePosition() },
+                        Modifier.scale(1.2f),
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = backgroundColorWhite,
+                            checkedTrackColor = Color.Transparent,
+                            checkedBorderColor = backgroundColorWhite,
+
+                            uncheckedThumbColor = backgroundColorWhite,
+                            uncheckedTrackColor = Color.Transparent,
+                            uncheckedBorderColor = backgroundColorWhite,
+                        )
+                    )
+                }
+
+                Spacer(Modifier.height(28.dp))
+                Row(modifier = Modifier
+                    .padding(start = 8.dp)
+                    .fillMaxWidth()
+                    .clickable(
+                        indication = null,
+                        interactionSource = interactionSource
+                    ) {
+                        themeViewModel.togglePlacePosition()
+                    },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Local AI",
+                        color = backgroundColorWhite,
+                        modifier = Modifier.weight(1f),
+                        fontSize = 18.sp
+                    )
+                    Switch(
+                        checked = isLocalAi,
+                        onCheckedChange = { viewModel.toggleLocalAi() },
                         Modifier.scale(1.2f),
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = backgroundColorWhite,

@@ -12,7 +12,7 @@ plugins {
 
 android {
     namespace = "com.example.oone"
-    compileSdk = 35
+    compileSdk = 36
 
     buildFeatures {
         buildConfig = true
@@ -57,9 +57,6 @@ android {
         isCoreLibraryDesugaringEnabled = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.15"
-    }
     kotlinOptions {
         jvmTarget = "11"
     }
@@ -70,7 +67,9 @@ kapt{
 }
 
 dependencies {
-    implementation("androidx.compose.ui:ui-text-google-fonts:1.7.0")
+
+    implementation("com.google.ai.edge.litertlm:litertlm-android:latest.release")
+    implementation("androidx.compose.ui:ui-text-google-fonts:1.11.0")
     implementation("com.google.android.gms:play-services-mlkit-text-recognition:19.0.1")
 
     implementation("androidx.glance:glance-appwidget:1.1.1")
@@ -78,14 +77,14 @@ dependencies {
     implementation("androidx.glance:glance-material:1.1.1")
 
     implementation("com.google.firebase:firebase-ai")
-    implementation("com.google.firebase:firebase-crashlytics-ndk:20.0.0")
-    implementation("com.google.firebase:firebase-analytics:23.0.0")
+    implementation("com.google.firebase:firebase-crashlytics-ndk")
+    implementation("com.google.firebase:firebase-analytics")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.2")
 
-    implementation("androidx.compose.material:material-icons-extended:1.7.8")
+    implementation("androidx.compose.material:material-icons-extended")
 
-    implementation("com.google.android.gms:play-services-base:17.6.0")
+    implementation("com.google.android.gms:play-services-base:18.10.0")
 
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
 
@@ -93,30 +92,30 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
 
-    implementation("androidx.navigation:navigation-compose:2.8.9")
+    implementation("androidx.navigation:navigation-compose:2.9.8")
 
-    implementation("androidx.datastore:datastore-preferences:1.1.4")
-    implementation("androidx.datastore:datastore-core:1.1.4")
+    implementation("androidx.datastore:datastore-preferences:1.2.1")
+    implementation("androidx.datastore:datastore-core:1.2.1")
 
-    implementation("androidx.compose.foundation:foundation:1.7.8")
+    implementation("androidx.compose.foundation:foundation")
     implementation(libs.androidx.ui)
     implementation(libs.androidx.material3)
     implementation("androidx.compose.ui:ui-tooling:1.7.8")
     implementation("androidx.activity:activity-compose:1.10.1")
     implementation("androidx.compose.animation:animation:1.7.8")
 
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
-    implementation("androidx.compose.runtime:runtime-livedata:1.7.8")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.10.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.10.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
+    implementation("androidx.compose.runtime:runtime-livedata:1.11.0")
 
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-runtime:2.8.4")
+    implementation("androidx.room:room-ktx:2.8.4")
+    kapt("androidx.room:room-compiler:2.8.4")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
 
 
     implementation(libs.androidx.biometric)

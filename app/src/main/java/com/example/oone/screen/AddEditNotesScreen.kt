@@ -99,6 +99,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import kotlin.time.Duration.Companion.milliseconds
 
 const val localUser = "local_user"
 
@@ -134,7 +135,12 @@ fun AddEditNoteScreen(
         mutableStateOf(noteToEdit?.lastEdited ?: LocalDateTime.now())
     }
     var tempAiStatus by remember { mutableStateOf(noteToEdit?.aiStatus ?: false) }
+
     val aiResult by viewModel?.analysisResult?.collectAsState() ?: remember { mutableStateOf(null) }
+    val localAi by viewModel?.localAi?.collectAsState() ?: remember { mutableStateOf(null) }
+
+    var isAiProgression by remember { mutableStateOf(false) }
+
     val undoStack = remember { mutableListOf<TextFieldValue>() }
     val redoStack = remember { mutableListOf<TextFieldValue>() }
     var askGemini by remember { mutableStateOf(false) }
@@ -164,7 +170,7 @@ fun AddEditNoteScreen(
         if (noteToEdit != null) {
             focusRequester.freeFocus()
         } else {
-            delay(100)
+            delay(100.milliseconds)
             try {
                 focusRequester.requestFocus()
             } catch (e: Exception) {
@@ -175,7 +181,7 @@ fun AddEditNoteScreen(
 
     LaunchedEffect(askGemini) {
         if (askGemini) {
-            delay(100)
+            delay(100.milliseconds)
             try {
                 geminiFocusRequester.requestFocus()
             } catch (e: Exception) {
@@ -190,7 +196,7 @@ fun AddEditNoteScreen(
 
     LaunchedEffect(deleteActivated) {
         if (deleteActivated) {
-            delay(5000)
+            delay(5000.milliseconds)
             deleteActivated = false
         }
     }
@@ -226,7 +232,7 @@ fun AddEditNoteScreen(
                 return@LaunchedEffect
             }
 
-            delay(500L)
+            delay(500L.milliseconds)
 
             val cleanBody = tempBody.text.trim()
             val cleanName = tempName.text.trim()
@@ -260,12 +266,13 @@ fun AddEditNoteScreen(
             if (noteToEdit == null && !isDelete) {
                 saveNote()
             }
+            viewModel?.clearAi()
         }
     }
 
     LaunchedEffect(aiResult) {
         aiResult?.let {
-            if (tempAiStatus) {
+            if (isAiProgression) {
                 val lines = it.lines()
                 val name = lines.firstOrNull()
                     ?.replace("#", "")?.replace("*", "")
@@ -287,7 +294,7 @@ fun AddEditNoteScreen(
                 )
 
 
-                tempAiStatus = false
+                isAiProgression = false
                 keyboardController?.hide()
                 focusManager.clearFocus()
             } else {
@@ -302,7 +309,6 @@ fun AddEditNoteScreen(
 
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    var isExiting by remember { mutableStateOf(false) }
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -345,14 +351,8 @@ fun AddEditNoteScreen(
                 errorMassage,
                 Toast.LENGTH_LONG
             ).show()
+            isAiProgression = false
             tempAiStatus = false
-        }
-    }
-
-    LaunchedEffect(isExiting) {
-        if (isExiting) {
-            delay(350)
-            isExiting = false
         }
     }
 
@@ -361,7 +361,6 @@ fun AddEditNoteScreen(
         if (askGemini) {
             askGemini = false
         } else {
-            isExiting = true
             navController?.popBackStack()
         }
     }
@@ -443,7 +442,6 @@ fun AddEditNoteScreen(
                             IconButton(
                                 onClick = {
                                     if (deleteActivated) {
-                                        isExiting = true
                                         if(noteToEdit != null) viewModel?.deleteNote(noteToEdit.id) else isDelete = true
                                         navController?.popBackStack()
                                         keyboardController?.hide()
@@ -480,7 +478,7 @@ fun AddEditNoteScreen(
                             shape = RoundedCornerShape(24.dp)
                         )
                 ) {
-                    if (tempAiStatus) {
+                    if (isAiProgression) {
                         AnimationGemini()
                     } else {
                         OutlinedTextField(
@@ -677,17 +675,6 @@ fun AddEditNoteScreen(
             }
         }
 
-        if(isExiting) {
-            Box(
-                modifier = Modifier.fillMaxSize().pointerInput(Unit) {
-                    awaitPointerEventScope {
-                        while (true)
-                            awaitPointerEvent()
-                    }
-                }
-            )
-        }
-
         if (askGemini) {
             val animatedBrush = rememberAnimationBorder(colors = geminiColors)
             Box(
@@ -727,7 +714,7 @@ fun AddEditNoteScreen(
                     },
                     placeholder = {
                         Text(
-                            "Ask Gemini",
+                            if(localAi == true) "Ask Gemma" else "Ask Gemini",
                             style = MaterialTheme.typography.bodyLarge
                         )
                     },
@@ -766,14 +753,12 @@ fun AddEditNoteScreen(
                     onClick = {
                         coroutineScope.launch {
                             if (tempBody.text.isNotBlank() || promptText.isNotBlank()) {
+                                isAiProgression = true
                                 tempAiStatus = true
-                                val fullQuery = """
-                                   ${tempBody.text}
-                                    
-                                    $promptText
-                                """.trimIndent()
+                                val prompt = "${tempBody.text} $promptText".trimIndent()
 
-                                viewModel?.analyze(fullQuery)
+                                viewModel?.analyze(prompt)
+
                                 promptText = ""
                                 askGemini = false
                             }

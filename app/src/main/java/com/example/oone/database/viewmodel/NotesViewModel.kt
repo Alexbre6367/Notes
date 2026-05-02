@@ -6,10 +6,13 @@ import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.util.Log
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.example.oone.ai.Gemini
+import com.example.oone.ai.Gemma
 import com.example.oone.auth.SecureStorage
 import com.example.oone.database.notes.Notes
 import com.example.oone.database.notes.NotesRoomDatabase
@@ -21,6 +24,7 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,13 +45,28 @@ class NotesViewModel(application: Application) : AndroidViewModel(application) {
     private val _userPassword = MutableStateFlow(secureStorage.getPassword() ?: "")
     val userPassword = _userPassword.asStateFlow()
 
+    private val dataStore = application.dataStore
+    private val _localAi = MutableStateFlow(false)
+    val localAi = _localAi.asStateFlow()
+
+    val gemma = Gemma(application)
+    private companion object {
+        val LOCAL_AI_KEY = booleanPreferencesKey("local_ai")
+    }
+
     init {
         val noteDb = NotesRoomDatabase.getInstance(application)
-        val noteDao = noteDb?.noteDao()
+        val noteDao = noteDb.noteDao()
         repository = NotesRepository(noteDao, secureStorage)
         notesList = repository.notesList
 
         loadNotesFromFirestore()
+
+        viewModelScope.launch {
+            application.dataStore.data.collect { preferences ->
+                _localAi.value = preferences[LOCAL_AI_KEY] ?: false
+            }
+        }
     }
 
     fun addNote(note: Notes) {
@@ -92,7 +111,7 @@ class NotesViewModel(application: Application) : AndroidViewModel(application) {
     fun deleteNote(id: Int){
         viewModelScope.launch {
             repository.deleteNote(id)
-            _selectedNoteId.value = _selectedNoteId.value - id
+            _selectedNoteId.value -= id
         }
     }
 
@@ -143,19 +162,39 @@ class NotesViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _errorLog = Channel<String>(Channel.BUFFERED)
     val errorLog: Flow<String> = _errorLog.receiveAsFlow()
+
+    private var aiJob: Job? = null
     fun analyze(text: String) {
-        viewModelScope.launch {
-            val result = Gemini.analyze(text)
-            if(result == null) {
-                _errorLog.send("Processing error")
-            } else {
-                _analysisResult.value = result
+        aiJob?.cancel()
+        aiJob = viewModelScope.launch {
+            try {
+                val result = if (localAi.value) {
+                    gemma.init()
+                    gemma.replay(text)
+                } else {
+                    Gemini.analyze(text)
+                }
+
+                if (result == null) {
+                    _errorLog.send("Processing error")
+                } else {
+                    _analysisResult.value = result
+                }
+            } catch (e: Exception) {
+                Log.d("MyLog", "Анализ был прерван пользователем")
             }
         }
     }
 
     fun clearAi() {
+        aiJob?.cancel()
+        aiJob = null
         _analysisResult.value = null
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        gemma.close()
     }
 
     private val _loadingBitmap = MutableStateFlow<Bitmap?>(null)
@@ -179,5 +218,18 @@ class NotesViewModel(application: Application) : AndroidViewModel(application) {
                 Log.e("MyLog", "${e.message}")
             }
         }
+    }
+
+    private fun saveLocalAi() {
+        viewModelScope.launch {
+            dataStore.edit { preferences ->
+                preferences[LOCAL_AI_KEY] = _localAi.value
+            }
+        }
+    }
+
+    fun toggleLocalAi() {
+        _localAi.value = !_localAi.value
+        saveLocalAi()
     }
 }

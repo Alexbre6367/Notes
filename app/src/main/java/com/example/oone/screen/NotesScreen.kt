@@ -14,18 +14,15 @@ package com.example.oone.screen
  import androidx.compose.foundation.layout.Arrangement
  import androidx.compose.foundation.layout.Box
  import androidx.compose.foundation.layout.Column
+ import androidx.compose.foundation.layout.PaddingValues
  import androidx.compose.foundation.layout.Row
  import androidx.compose.foundation.layout.Spacer
- import androidx.compose.foundation.layout.WindowInsets
- import androidx.compose.foundation.layout.asPaddingValues
- import androidx.compose.foundation.layout.fillMaxHeight
  import androidx.compose.foundation.layout.fillMaxSize
  import androidx.compose.foundation.layout.fillMaxWidth
  import androidx.compose.foundation.layout.height
  import androidx.compose.foundation.layout.heightIn
  import androidx.compose.foundation.layout.padding
  import androidx.compose.foundation.layout.size
- import androidx.compose.foundation.layout.statusBars
  import androidx.compose.foundation.layout.width
  import androidx.compose.foundation.lazy.LazyColumn
  import androidx.compose.foundation.lazy.items
@@ -45,6 +42,7 @@ package com.example.oone.screen
  import androidx.compose.material.icons.filled.Settings
  import androidx.compose.material3.Card
  import androidx.compose.material3.CardDefaults
+ import androidx.compose.material3.CenterAlignedTopAppBar
  import androidx.compose.material3.DrawerValue
  import androidx.compose.material3.ExperimentalMaterial3Api
  import androidx.compose.material3.FloatingActionButton
@@ -58,7 +56,6 @@ package com.example.oone.screen
  import androidx.compose.material3.NavigationDrawerItemDefaults
  import androidx.compose.material3.Scaffold
  import androidx.compose.material3.Text
- import androidx.compose.material3.TopAppBar
  import androidx.compose.material3.TopAppBarDefaults
  import androidx.compose.material3.rememberDrawerState
  import androidx.compose.runtime.Composable
@@ -88,6 +85,7 @@ package com.example.oone.screen
  import com.google.firebase.auth.FirebaseAuth
  import kotlinx.coroutines.delay
  import kotlinx.coroutines.launch
+ import kotlin.time.Duration.Companion.milliseconds
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -139,7 +137,8 @@ fun NotesScreen(
                 drawerContainerColor = backgroundColorBlack
             ) {
                 Column(
-                    modifier = Modifier.padding(horizontal = 16.dp)
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
                         .verticalScroll(rememberScrollState())
                 ) {
                     Spacer(Modifier.height(12.dp))
@@ -194,7 +193,7 @@ fun NotesScreen(
     ) {
         Scaffold(
             topBar = {
-                TopAppBar(
+                CenterAlignedTopAppBar(
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = backgroundColorBlack,
                         titleContentColor = backgroundColorWhite,
@@ -206,9 +205,7 @@ fun NotesScreen(
                                 onClick = {
                                     viewModel.toggleNoteAll()
                                 },
-                                modifier = Modifier
-                                    .padding(horizontal = 5.dp)
-                                    .fillMaxHeight()
+                                modifier = Modifier.padding(horizontal = 5.dp)
                             ) {
                                 Icon(
                                     Icons.Default.AutoAwesomeMotion,
@@ -228,7 +225,6 @@ fun NotesScreen(
                                 },
                                 modifier = Modifier
                                     .padding(horizontal = 5.dp)
-                                    .fillMaxHeight()
                             ) {
                                 Icon(
                                     Icons.Default.Menu,
@@ -239,16 +235,10 @@ fun NotesScreen(
                         }
                     },
                     title = {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "Notes",
-                                style = MaterialTheme.typography.titleLarge
-                            )
-                        }
+                        Text(
+                            text = "Notes",
+                            style = MaterialTheme.typography.titleLarge
+                        )
                     },
                     actions = {
                         IconButton(
@@ -269,9 +259,7 @@ fun NotesScreen(
                                     }
                                 }
                             },
-                            modifier = Modifier
-                                .padding(horizontal = 5.dp)
-                                .fillMaxHeight()
+                            modifier = Modifier.padding(horizontal = 5.dp)
                         ) {
                             Icon(
                                 imageVector = when {
@@ -287,12 +275,12 @@ fun NotesScreen(
                     }
                 )
             },
-            content = { padding->
+            content = { padding ->
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(backgroundColorBlack)
-                        .padding(top = 60.dp)
+                        .padding(padding)
                         .clickable(
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() }
@@ -309,9 +297,9 @@ fun NotesScreen(
                             LazyColumn(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .padding(horizontal = 8.dp)
-                                    .padding(top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding())
-                                ) {
+                                    .padding(horizontal = 8.dp),
+                                contentPadding = PaddingValues(bottom = 100.dp)
+                            ) {
                                 val pinnedNotes = sortedNotes.filter { it.status }
                                 val aiNotes = sortedNotes.filter { it.aiStatus && !it.status}
                                 val otherNotes = sortedNotes.filter { !it.status && !it.aiStatus}
@@ -450,7 +438,7 @@ fun NoteItem(
 
     if (note.id in selectedNoteId) {
         LaunchedEffect(note.id) {
-            delay(10000)
+            delay(10000.milliseconds)
             viewModel.toggleNoteSelection(note.id)
         }
     }
@@ -476,7 +464,7 @@ fun NoteItem(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
                 onClick = {
-                    if(isSelected) {
+                    if (isSelected) {
                         viewModel.toggleNoteSelection(note.id)
                     } else {
                         if (note.state) {
@@ -493,8 +481,8 @@ fun NoteItem(
                 }
             )
             .border(
-                width = if(note.id in selectedNoteId) 2.dp else 1.dp,
-                color = if(note.id in selectedNoteId) backgroundColorWhite else borderColor,
+                width = if (note.id in selectedNoteId) 2.dp else 1.dp,
+                color = if (note.id in selectedNoteId) backgroundColorWhite else borderColor,
                 shape = RoundedCornerShape(24.dp)
             ),
         shape = RoundedCornerShape(24.dp),
