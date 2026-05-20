@@ -47,8 +47,8 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.AddPhotoAlternate
 import androidx.compose.material.icons.outlined.AutoAwesome
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.KeyboardVoice
-import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -650,11 +650,11 @@ fun AddEditNoteScreen(
 
                             IconButton(
                                 onClick = {
-
+                                    saveNote()
                                 },
                             ) {
                                 Icon(
-                                    Icons.Outlined.Timer,
+                                    Icons.Outlined.Check,
                                     contentDescription = "Timer",
                                     tint = backgroundColorWhite,
                                 )
