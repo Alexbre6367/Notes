@@ -17,7 +17,7 @@
       ],
       "attributes": [],
       "versionCode": 1,
-      "versionName": "0.9.3",
+      "versionName": "1.0.0",
       "outputFile": "app-armeabi-v7a-release.apk"
     },
     {
@@ -30,7 +30,7 @@
       ],
       "attributes": [],
       "versionCode": 1,
-      "versionName": "0.9.3",
+      "versionName": "1.0.0",
       "outputFile": "app-arm64-v8a-release.apk"
     }
   ],

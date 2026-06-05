@@ -3,7 +3,6 @@ package com.example.oone.database.repositories
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.oone.auth.SecureStorage
 import com.example.oone.database.notes.NoteDao
 import com.example.oone.database.notes.Notes
 import com.google.firebase.Firebase
@@ -15,9 +14,10 @@ import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
+import java.util.UUID
 
 
-class NotesRepository(val notesDao: NoteDao?, private val secureStorage: SecureStorage) {
+class NotesRepository(val notesDao: NoteDao?) {
 
     private val firestore = Firebase.firestore
     private val notesCollection = firestore.collection("notes")
@@ -73,15 +73,11 @@ class NotesRepository(val notesDao: NoteDao?, private val secureStorage: SecureS
     }
 
     private fun uploadNoteToFirestore(note: Notes) {
-        val userId = Firebase.auth.currentUser?.uid
-        if (userId != null) {
-            val noteMap = note.toMap(userId)
-            firestore.collection("notes").document(note.id.toString()).set(noteMap)
-        } else {
-            Log.e("MyLog", "Ошибка: пользователь не авторизован")
-        }
+        val userId = Firebase.auth.currentUser?.uid ?: return
 
-        notesCollection.document(note.id.toString())
+        val firestoreDocId = UUID.nameUUIDFromBytes("${userId}_${note.id}".toByteArray()).toString()
+
+        notesCollection.document(firestoreDocId)
             .set(note.toMap(userId), SetOptions.merge())
             .addOnSuccessListener {
                 Log.d("MyLog", "Заметка загруженна: ${note.id}" )

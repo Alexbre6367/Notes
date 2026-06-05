@@ -57,7 +57,7 @@ class NotesViewModel(application: Application) : AndroidViewModel(application) {
     init {
         val noteDb = NotesRoomDatabase.getInstance(application)
         val noteDao = noteDb.noteDao()
-        repository = NotesRepository(noteDao, secureStorage)
+        repository = NotesRepository(noteDao)
         notesList = repository.notesList
 
         loadNotesFromFirestore()
