@@ -52,7 +52,11 @@ class NotesRepository(val notesDao: NoteDao?) {
     suspend fun deleteNote(id: Int) {
         withContext(Dispatchers.IO) {
             notesDao?.deleteNote(id)
-            notesCollection.document(id.toString()).delete()
+            val userId = Firebase.auth.currentUser?.uid
+            if(userId != null) {
+                val firestoreDocId = UUID.nameUUIDFromBytes("${userId}_${id}".toByteArray()).toString()
+                notesCollection.document(firestoreDocId).delete()
+            }
         }
     }
 
