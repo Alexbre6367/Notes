@@ -17,11 +17,11 @@ import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
-import com.example.oone.database.viewmodel.NotesViewModel
-import com.example.oone.database.viewmodel.NotesViewModelFactory
-import com.example.oone.database.viewmodel.ThemeViewModel
-import com.example.oone.database.viewmodel.ThemeViewModelFactory
 import com.example.oone.navigation.AppNavGraph
+import com.example.oone.ui.screen.viewmodel.NotesViewModel
+import com.example.oone.ui.screen.viewmodel.NotesViewModelFactory
+import com.example.oone.ui.screen.viewmodel.ThemeViewModel
+import com.example.oone.ui.screen.viewmodel.ThemeViewModelFactory
 import com.example.oone.ui.theme.OOneTheme
 import com.example.oone.ui.theme.colorRed
 

@@ -1,4 +1,4 @@
-package com.example.oone.screen
+package com.example.oone.ui.screen.home
 
 import android.app.Activity
 import android.content.Intent
@@ -87,8 +87,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.oone.database.notes.Notes
-import com.example.oone.database.viewmodel.NotesViewModel
-import com.example.oone.database.viewmodel.ThemeViewModel
+import com.example.oone.ui.screen.viewmodel.NotesViewModel
+import com.example.oone.ui.screen.viewmodel.ThemeViewModel
 import com.example.oone.ui.theme.borderColor
 import com.example.oone.ui.theme.geminiColors
 import com.google.firebase.Firebase
@@ -160,6 +160,8 @@ fun AddEditNoteScreen(
     val isDarkTheme by themeViewModel.isDarkTheme
     val backgroundColorBlack = if (isDarkTheme) Color.Black else Color.White
     val backgroundColorWhite = if (isDarkTheme) Color.White else Color.Black
+    val themeColor = if(isDarkTheme) borderColor else Color.Transparent
+    val sizeBorder = if(!isDarkTheme) 1.dp else 0.dp
 
     val focusRequester = remember { FocusRequester() }
     val geminiFocusRequester = remember { FocusRequester() }
@@ -200,6 +202,8 @@ fun AddEditNoteScreen(
             deleteActivated = false
         }
     }
+
+    var save by remember { mutableStateOf(false) }
 
     fun saveNote() {
         val cleanBody = tempBody.text.trim()
@@ -263,7 +267,7 @@ fun AddEditNoteScreen(
 
     DisposableEffect(Unit) {
         onDispose {
-            if (noteToEdit == null && !isDelete) {
+            if (noteToEdit == null && !isDelete && !save) {
                 saveNote()
             }
             viewModel?.clearAi()
@@ -410,10 +414,37 @@ fun AddEditNoteScreen(
                         )
                     )
 
+                    IconButton(
+                        onClick = {
+                            if(noteToEdit == null && !isDelete) saveNote()
+                            save = true
+                            viewModel?.clearAi()
+                            navController?.popBackStack()
+                        },
+                        modifier = Modifier
+                            .background(themeColor, CircleShape)
+                            .border(
+                                width = sizeBorder,
+                                color = borderColor,
+                                CircleShape
+                            )
+                    ) {
+                        Icon(
+                            Icons.Outlined.Check,
+                            contentDescription = null,
+                            tint = colorRed,
+                        )
+                    }
+
                     Row(
                         modifier = Modifier
                             .padding(12.dp)
-                            .background(color = borderColor, shape = CircleShape)
+                            .background(themeColor, CircleShape)
+                            .border(
+                                width = sizeBorder,
+                                color = borderColor,
+                                CircleShape
+                            )
                             .animateContentSize(
                                 animationSpec = tween(durationMillis = 250)
                             ),
@@ -460,7 +491,13 @@ fun AddEditNoteScreen(
                         }
                         IconButton(
                             onClick = { menu = !menu },
-                            modifier = Modifier.background(borderColor, shape = CircleShape)
+                            modifier = Modifier
+                                .background(themeColor, CircleShape)
+                                .border(
+                                    width = sizeBorder,
+                                    color = borderColor,
+                                    CircleShape
+                                )
                         ) {
                             Icon(
                                 Icons.Outlined.Tune,
@@ -474,8 +511,13 @@ fun AddEditNoteScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(
-                            color = borderColor,
+                            color = themeColor,
                             shape = RoundedCornerShape(24.dp)
+                        )
+                        .border(
+                            width = sizeBorder,
+                            color = borderColor,
+                            RoundedCornerShape(24.dp)
                         )
                 ) {
                     if (isAiProgression) {
@@ -550,9 +592,11 @@ fun AddEditNoteScreen(
                     Row(
                         modifier = Modifier
                             .padding(12.dp)
-                            .background(
+                            .background(themeColor, CircleShape)
+                            .border(
+                                width = sizeBorder,
                                 color = borderColor,
-                                shape = CircleShape
+                                CircleShape
                             )
                     ) {
                         IconButton(
@@ -595,7 +639,12 @@ fun AddEditNoteScreen(
                     Row(
                         modifier = Modifier
                             .padding(12.dp)
-                            .background(color = borderColor, shape = CircleShape)
+                            .background(themeColor, CircleShape)
+                            .border(
+                                width = sizeBorder,
+                                color = borderColor,
+                                CircleShape
+                            )
                             .animateContentSize(
                                 animationSpec = tween(durationMillis = 250)
                             ),
@@ -644,18 +693,6 @@ fun AddEditNoteScreen(
                                 Icon(
                                     Icons.Outlined.AddPhotoAlternate,
                                     contentDescription = "Add Photo",
-                                    tint = backgroundColorWhite,
-                                )
-                            }
-
-                            IconButton(
-                                onClick = {
-                                    saveNote()
-                                },
-                            ) {
-                                Icon(
-                                    Icons.Outlined.Check,
-                                    contentDescription = "Timer",
                                     tint = backgroundColorWhite,
                                 )
                             }
@@ -721,6 +758,12 @@ fun AddEditNoteScreen(
                     maxLines = 3,
                     modifier = Modifier
                         .weight(1f)
+                        .background(themeColor, CircleShape)
+                        .border(
+                            width = sizeBorder,
+                            color = borderColor,
+                            CircleShape
+                        )
                         .focusRequester(geminiFocusRequester),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Color.Transparent,

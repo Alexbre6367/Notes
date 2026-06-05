@@ -1,4 +1,4 @@
-package com.example.oone.screen.login
+package com.example.oone.ui.screen.login
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccountCircle
@@ -40,8 +42,8 @@ import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import com.example.oone.auth.authenticate
-import com.example.oone.database.viewmodel.NotesViewModel
-import com.example.oone.database.viewmodel.ThemeViewModel
+import com.example.oone.ui.screen.viewmodel.NotesViewModel
+import com.example.oone.ui.screen.viewmodel.ThemeViewModel
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 
@@ -77,9 +79,12 @@ fun AccountScreen(
         navController.navigate("note_screen")
     }
 
+    val scrollState = rememberScrollState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(scrollState)
             .background(backgroundColorBlack)
             .clickable(
                 interactionSource = interactionSource,
@@ -177,7 +182,7 @@ fun AccountScreen(
                     if(isDeleteAccount) {
                         authenticate(activity) {
                             if (currentEmail.isNotEmpty() && currentPassword.isNotEmpty()) {
-                                viewModel.deleteUserAndNotes(auth, currentEmail, currentPassword) { success ->
+                                viewModel.deleteUserAndNotes(auth, currentEmail, currentPassword) {
                                     deleteAccount(auth, currentEmail, currentPassword)
                                     navController.navigate("login_screen")
                                 }

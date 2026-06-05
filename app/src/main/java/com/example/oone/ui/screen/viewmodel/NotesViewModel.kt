@@ -1,4 +1,4 @@
-package com.example.oone.database.viewmodel
+package com.example.oone.ui.screen.viewmodel
 
 import android.app.Application
 import android.content.ContentResolver
@@ -181,7 +181,7 @@ class NotesViewModel(application: Application) : AndroidViewModel(application) {
                     _analysisResult.value = result
                 }
             } catch (e: Exception) {
-                Log.d("MyLog", "Анализ был прерван пользователем")
+                Log.d("MyLog", "Анализ был прерван пользователем", e)
             }
         }
     }

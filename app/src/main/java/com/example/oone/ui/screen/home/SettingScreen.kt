@@ -1,4 +1,4 @@
-package com.example.oone.screen
+package com.example.oone.ui.screen.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -33,8 +33,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.oone.database.viewmodel.NotesViewModel
-import com.example.oone.database.viewmodel.ThemeViewModel
+import com.example.oone.ui.screen.viewmodel.NotesViewModel
+import com.example.oone.ui.screen.viewmodel.ThemeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

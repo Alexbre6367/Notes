@@ -1,4 +1,4 @@
-package com.example.oone.screen.login
+package com.example.oone.ui.screen.login
 
 import android.util.Log
 import android.widget.Toast
@@ -16,7 +16,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Visibility
@@ -54,8 +56,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.oone.database.viewmodel.NotesViewModel
-import com.example.oone.database.viewmodel.ThemeViewModel
+import com.example.oone.ui.screen.viewmodel.NotesViewModel
+import com.example.oone.ui.screen.viewmodel.ThemeViewModel
 import com.example.oone.ui.theme.borderColor
 import com.example.oone.ui.theme.googleBlue
 import com.example.oone.ui.theme.googleGreen
@@ -118,6 +120,8 @@ fun LoginScreen(
         }
     }
 
+    val scrollState = rememberScrollState()
+
 
     BackHandler {
         navController.navigate("note_screen")
@@ -137,6 +141,7 @@ fun LoginScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(scrollState)
                 .background(backgroundColorBlack)
         ) {
             Box(modifier = Modifier.padding(start = 8.dp, top = 50.dp)) {

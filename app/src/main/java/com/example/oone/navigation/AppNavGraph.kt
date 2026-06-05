@@ -18,13 +18,13 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.oone.database.viewmodel.NotesViewModel
-import com.example.oone.database.viewmodel.ThemeViewModel
-import com.example.oone.screen.AddEditNoteScreen
-import com.example.oone.screen.NotesScreen
-import com.example.oone.screen.SettingScreen
-import com.example.oone.screen.login.AccountScreen
-import com.example.oone.screen.login.LoginScreen
+import com.example.oone.ui.screen.home.AddEditNoteScreen
+import com.example.oone.ui.screen.home.NotesScreen
+import com.example.oone.ui.screen.home.SettingScreen
+import com.example.oone.ui.screen.login.AccountScreen
+import com.example.oone.ui.screen.login.LoginScreen
+import com.example.oone.ui.screen.viewmodel.NotesViewModel
+import com.example.oone.ui.screen.viewmodel.ThemeViewModel
 
 
 @Composable

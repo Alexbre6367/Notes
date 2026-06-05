@@ -1,4 +1,4 @@
-package com.example.oone.screen
+package com.example.oone.ui.screen.home
 
 
  import androidx.activity.compose.BackHandler
@@ -78,8 +78,8 @@ package com.example.oone.screen
  import androidx.navigation.NavController
  import com.example.oone.auth.authenticate
  import com.example.oone.database.notes.Notes
- import com.example.oone.database.viewmodel.NotesViewModel
- import com.example.oone.database.viewmodel.ThemeViewModel
+ import com.example.oone.ui.screen.viewmodel.NotesViewModel
+ import com.example.oone.ui.screen.viewmodel.ThemeViewModel
  import com.example.oone.ui.theme.borderColor
  import com.example.oone.ui.theme.colorRed
  import com.google.firebase.auth.FirebaseAuth
@@ -298,7 +298,7 @@ fun NotesScreen(
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(horizontal = 8.dp),
-                                contentPadding = PaddingValues(bottom = 100.dp)
+                                contentPadding = PaddingValues(bottom = 116.dp)
                             ) {
                                 val pinnedNotes = sortedNotes.filter { it.status }
                                 val aiNotes = sortedNotes.filter { it.aiStatus && !it.status}
@@ -435,6 +435,7 @@ fun NoteItem(
 ){
     val backgroundColorWhite = if (isDarkTheme) Color.White else Color.Black
     val selectedNoteId by viewModel.selectedNoteId.collectAsState()
+    val card = if (isDarkTheme) borderColor else Color.Transparent
 
     if (note.id in selectedNoteId) {
         LaunchedEffect(note.id) {
@@ -486,7 +487,7 @@ fun NoteItem(
                 shape = RoundedCornerShape(24.dp)
             ),
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = borderColor),
+        colors = CardDefaults.cardColors(containerColor = card),
     ) {
         Row(
             modifier = Modifier

@@ -1,4 +1,4 @@
-package com.example.oone.database.viewmodel
+package com.example.oone.ui.screen.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.ViewModel
